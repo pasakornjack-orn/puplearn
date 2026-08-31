@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Anuphan', sans-serif;
+  --font-display: 'Fredoka', sans-serif;
+
+  --animate-fade-in: fade-in 0.4s ease-out forwards;
+  --animate-fade-in-up: fade-in-up 0.5s ease-out forwards;
+  --animate-bounce-twice: bounce-twice 1s ease-in-out 2;
+  --animate-breath: breath 4s ease-in-out infinite;
+  --animate-cloud-slow: cloud-drift 40s linear infinite;
+  --animate-cloud-slower: cloud-drift 60s linear infinite;
+  --animate-pulse-occasional: pulse-occasional 6s ease-in-out infinite;
+
+  @keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes fade-in-up {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes bounce-twice {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15%); }
+  }
+
+  @keyframes breath {
+    0%, 100% { transform: scale(1) translateY(0); }
+    50% { transform: scale(1.015) translateY(-3px); }
+  }
+
+  @keyframes cloud-drift {
+    0% { transform: translateX(100vw); }
+    100% { transform: translateX(-150vw); }
+  }
+
+  @keyframes pulse-occasional {
+    0%, 85%, 100% { transform: scale(1); }
+    90% { transform: scale(1.04); }
+    95% { transform: scale(0.98); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  margin: 0;
+  background-color: #f0f8ff;
+}
