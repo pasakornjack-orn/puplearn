@@ -110,7 +110,7 @@ export const MascotBubble = ({
     return (
       <div className="w-full h-full relative pointer-events-none">
         {/* Decoupled Bubble: Anchored to the right of Bingo's head */}
-        <div className="absolute bottom-[180px] sm:bottom-[200px] left-[215px] sm:left-[235px] pointer-events-auto z-50">
+        <div className="absolute bottom-[130px] sm:bottom-[160px] left-[150px] sm:left-[190px] pointer-events-auto z-50">
           <div className="bg-white/95 backdrop-blur-sm border-[4px] border-yellow-300 rounded-[2rem] rounded-bl-sm p-3 pr-8 shadow-lg relative z-10 w-40 sm:w-48">
             {renderReplayButton("absolute top-1/2 -translate-y-1/2 right-1 w-6 h-6 border-2 border-gray-100 scale-[0.8]")}
             {/* Tail pointing left towards Bingo */}
@@ -120,8 +120,8 @@ export const MascotBubble = ({
           </div>
         </div>
         {/* Mascot: Anchored at the bottom left, slightly reduced */}
-        <div className="absolute bottom-0 -left-6 sm:-left-8 z-0">
-          <img src={imageSrc} alt={mascot} className="w-[285px] sm:w-[330px] max-w-none h-auto object-contain drop-shadow-xl origin-bottom-left animate-breath" />
+        <div className="absolute bottom-0 -left-2 sm:-left-4 z-0">
+          <img src={imageSrc} alt={mascot} className="w-[200px] sm:w-[260px] max-h-[25vh] max-w-none h-auto object-contain drop-shadow-xl origin-bottom-left animate-breath" />
         </div>
       </div>
     );
@@ -131,7 +131,7 @@ export const MascotBubble = ({
     return (
       <div className="w-full flex flex-col justify-center items-center pointer-events-none mt-2">
         {/* Bubble on top */}
-        <div className="relative mb-6 pointer-events-auto z-20">
+        <div className="relative mb-2 sm:mb-4 pointer-events-auto z-20">
           <div className="bg-white border-[4px] border-yellow-300 rounded-[2rem] p-3 sm:p-4 pr-10 shadow-lg relative z-10 w-48 sm:w-56 text-left">
             {renderReplayButton("absolute top-1/2 -translate-y-1/2 right-2 w-8 h-8 border-2 border-gray-100")}
             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-5 h-5 bg-white border-b-[4px] border-r-[4px] border-yellow-300 transform rotate-45 origin-center"></div>
@@ -140,8 +140,8 @@ export const MascotBubble = ({
           </div>
         </div>
         {/* Mascot on bottom */}
-        <div className="relative w-56 sm:w-64 h-auto flex-shrink-0 z-10">
-          <img src={imageSrc} alt={mascot} className="w-full max-w-none h-auto object-contain drop-shadow-xl origin-bottom animate-breath" />
+        <div className="relative w-40 sm:w-48 h-auto flex-shrink-0 z-10 min-h-[140px] flex items-end justify-center">
+          <img src={imageSrc} alt={mascot} className="w-full max-h-[18vh] max-w-none h-auto object-contain drop-shadow-xl origin-bottom animate-breath" />
         </div>
       </div>
     );

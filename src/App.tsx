@@ -751,26 +751,26 @@ function App() {
 
         {/* STATE: COMPLETED */}
         {gameState === 'completed' && (
-          <div className="animate-fade-in-up flex-1 flex flex-col items-center justify-start text-center px-6 relative z-10 pt-6 pb-6 overflow-y-auto">
+          <div className="animate-fade-in-up flex-1 flex flex-col items-center justify-between text-center px-4 relative z-10 pt-4 pb-4 overflow-hidden">
             
             {/* Top Area: Excellent & Star */}
             <div className="relative z-20 w-full flex flex-col items-center flex-1 justify-start">
-              <div className="w-full bg-white rounded-[3.5rem] border-b-[12px] border-yellow-100 shadow-[0_20px_40px_rgba(0,0,0,0.1)] px-6 pb-8 pt-6 flex flex-col items-center max-w-[320px]">
-                <div className="text-[80px] sm:text-[100px] animate-bounce drop-shadow-[0_20px_20px_rgba(250,204,21,0.5)] leading-none mb-2">🌟</div>
-                <p className="text-4xl sm:text-5xl font-display font-bold uppercase text-green-500 tracking-wide drop-shadow-sm mb-2">Excellent!</p>
-                <p className="text-2xl sm:text-3xl font-bold text-gray-700 bg-gray-50/80 px-6 py-2 rounded-full border-2 border-gray-100 shadow-sm">เก่งมากเลย!</p>
+              <div className="w-full bg-white rounded-[3rem] border-b-[8px] border-yellow-100 shadow-[0_15px_30px_rgba(0,0,0,0.1)] px-4 pb-6 pt-4 flex flex-col items-center max-w-[300px]">
+                <div className="text-[60px] sm:text-[80px] animate-bounce drop-shadow-[0_20px_20px_rgba(250,204,21,0.5)] leading-none mb-1">🌟</div>
+                <p className="text-3xl sm:text-4xl font-display font-bold uppercase text-green-500 tracking-wide drop-shadow-sm mb-2">Excellent!</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-700 bg-gray-50/80 px-4 py-1.5 rounded-full border-2 border-gray-100 shadow-sm">เก่งมากเลย!</p>
               </div>
             </div>
 
             {/* Bottom Area: Mascot & CTA */}
-            <div className="relative z-10 w-full max-w-sm flex flex-col items-center pb-6 mt-6 flex-shrink-0">
+            <div className="relative z-10 w-full max-w-sm flex flex-col items-center pb-2 mt-2 flex-shrink-0">
               
               {/* Floating Mascot behind/above CTA */}
-              <div className="w-full flex justify-center mb-4 relative z-20 pointer-events-none">
+              <div className="w-full flex justify-center mb-2 relative z-20 pointer-events-none">
                 <img 
                   src={getMascotAsset(isSessionMode && sessionIndex === levelASession.length - 1 ? "Bingo" : "Pillow", 'happy')} 
                   alt="Mascot" 
-                  className="w-48 sm:w-56 h-auto object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.15)] animate-bounce-twice relative z-10" 
+                  className="w-32 sm:w-48 max-h-[18vh] h-auto object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.15)] animate-bounce-twice relative z-10" 
                 />
               </div>
 

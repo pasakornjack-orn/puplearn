@@ -28,15 +28,15 @@ const VocabularyTeaching: React.FC<VocabularyTeachingProps> = ({
     `พูดตาม Pillow นะ... ${displayTargetText}!`;
 
   return (
-    <div className="absolute inset-0 flex flex-col z-10 overflow-y-auto animate-fade-in pb-safe">
+    <div className="absolute inset-0 flex flex-col z-10 overflow-hidden animate-fade-in pb-safe">
       
       {/* Top Spacer */}
-      <div className="flex-shrink-0 h-[10px] sm:h-[16px]"></div>
+      <div className="flex-shrink-0 h-[4px] sm:h-[10px]"></div>
 
-      <div className="flex-1 w-full max-w-md mx-auto flex flex-col justify-start px-6 relative z-10 mt-2 sm:mt-4">
+      <div className="flex-1 w-full max-w-md mx-auto flex flex-col justify-between px-6 relative z-10 mt-1 sm:mt-2">
         
         {/* Hero Learning Card */}
-        <div className="w-full bg-white/95 backdrop-blur-md rounded-[3.5rem] border-b-[12px] border-sky-100 shadow-[0_20px_40px_rgba(0,0,0,0.1)] pt-6 pb-6 px-6 relative flex flex-col items-center z-20 mb-4">
+        <div className="w-full bg-white/95 backdrop-blur-md rounded-[3rem] sm:rounded-[3.5rem] border-b-[8px] sm:border-b-[12px] border-sky-100 shadow-[0_15px_30px_rgba(0,0,0,0.1)] pt-4 pb-4 sm:pt-6 sm:pb-6 px-4 relative flex flex-col items-center z-20 mb-2">
           
           <button 
             onClick={() => {
@@ -82,7 +82,7 @@ const VocabularyTeaching: React.FC<VocabularyTeachingProps> = ({
         </div>
 
         {/* Bottom Area: CTA */}
-        <div className="w-full flex justify-center relative z-50 mb-6 sm:mb-8 mt-2 flex-shrink-0">
+        <div className="w-full flex justify-center relative z-50 mb-4 sm:mb-6 mt-1 flex-shrink-0">
           <button 
             onClick={onComplete}
             className="w-[200px] bg-green-500 text-white font-bold text-2xl py-4 rounded-[2.5rem] shadow-[0_8px_0_rgb(22,163,74),_0_15px_20px_rgba(0,0,0,0.15)] hover:scale-[1.02] active:scale-[0.98] active:translate-y-2 active:shadow-[0_0_0_rgb(22,163,74)] transition-all border-[5px] border-green-300 tracking-wide flex justify-center items-center gap-2"
