@@ -33,7 +33,7 @@ const VocabularyTeaching: React.FC<VocabularyTeachingProps> = ({
       {/* Top Spacer */}
       <div className="flex-shrink-0 h-[4px] sm:h-[10px]"></div>
 
-      <div className="flex-1 w-full max-w-md mx-auto flex flex-col justify-between px-6 relative z-10 mt-1 sm:mt-2">
+      <div className="flex-1 w-full max-w-md mx-auto flex flex-col justify-start items-center gap-2 px-6 relative z-10 mt-1 sm:mt-2">
         
         {/* Hero Learning Card */}
         <div className="w-full bg-white/95 backdrop-blur-md rounded-[3rem] sm:rounded-[3.5rem] border-b-[8px] sm:border-b-[12px] border-sky-100 shadow-[0_15px_30px_rgba(0,0,0,0.1)] pt-4 pb-4 sm:pt-6 sm:pb-6 px-4 relative flex flex-col items-center z-20 mb-2">

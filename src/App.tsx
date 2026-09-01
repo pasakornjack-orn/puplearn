@@ -751,7 +751,7 @@ function App() {
 
         {/* STATE: COMPLETED */}
         {gameState === 'completed' && (
-          <div className="animate-fade-in-up flex-1 flex flex-col items-center justify-between text-center px-4 relative z-10 pt-4 pb-4 overflow-hidden">
+          <div className="animate-fade-in-up flex-1 flex flex-col items-center justify-start gap-2 sm:gap-4 text-center px-4 relative z-10 pt-4 pb-4 overflow-hidden">
             
             {/* Top Area: Excellent & Star */}
             <div className="relative z-20 w-full flex flex-col items-center flex-1 justify-start">
@@ -770,7 +770,7 @@ function App() {
                 <img 
                   src={getMascotAsset(isSessionMode && sessionIndex === levelASession.length - 1 ? "Bingo" : "Pillow", 'happy')} 
                   alt="Mascot" 
-                  className="w-32 sm:w-48 max-h-[18vh] h-auto object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.15)] animate-bounce-twice relative z-10" 
+                  className="w-40 sm:w-48 max-h-[22vh] h-auto object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.15)] animate-bounce-twice relative z-10" 
                 />
               </div>
 

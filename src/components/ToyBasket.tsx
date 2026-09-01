@@ -27,7 +27,7 @@ const ToyBasket: React.FC<ToyBasketProps> = ({ items }) => {
         <img 
           src="/ui/basket-v2.png" 
           alt="Shopping Basket" 
-          className="relative z-20 w-52 h-auto object-contain drop-shadow-[0_15px_20px_rgba(0,0,0,0.15)] basket-target"
+          className="relative z-20 w-40 sm:w-48 h-auto object-contain drop-shadow-[0_15px_20px_rgba(0,0,0,0.15)] basket-target"
         />
 
         {/* Optional Sparkle/Success Effect on Drop */}

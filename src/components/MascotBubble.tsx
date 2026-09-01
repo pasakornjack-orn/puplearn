@@ -140,8 +140,8 @@ export const MascotBubble = ({
           </div>
         </div>
         {/* Mascot on bottom */}
-        <div className="relative w-40 sm:w-48 h-auto flex-shrink-0 z-10 min-h-[140px] flex items-end justify-center">
-          <img src={imageSrc} alt={mascot} className="w-full max-h-[18vh] max-w-none h-auto object-contain drop-shadow-xl origin-bottom animate-breath" />
+        <div className="relative w-48 sm:w-56 h-auto flex-shrink-0 z-10 min-h-[160px] flex items-end justify-center">
+          <img src={imageSrc} alt={mascot} className="w-full max-h-[22vh] max-w-none h-auto object-contain drop-shadow-xl origin-bottom animate-breath" />
         </div>
       </div>
     );
