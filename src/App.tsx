@@ -254,11 +254,6 @@ function App() {
   const isPickTwo = activeMission.layoutTemplate === 'pick-two';
   const currentEnglishItem = targetProducts[englishItemIndex];
   
-  const englishTargetText = isPickTwo && currentEnglishItem ? `${currentEnglishItem.englishName}!` 
-    : (activeMission.englishTeachingText || targetProducts.map(p => p.englishName).join('!... ')) + '!';
-    
-  const displayTargetText = isPickTwo && currentEnglishItem ? currentEnglishItem.englishName 
-    : (activeMission.englishTeachingText ? activeMission.englishTeachingText.replace('!... ', ' & ') : targetProducts.map(p => p.englishName).join(' & '));
 
   const handleEnglishAnswer = (isCorrect: boolean) => {
     if (isCorrect) {
@@ -641,10 +636,10 @@ function App() {
 
         {/* STATE: ENGLISH INTERACTION */}
         {gameState === 'english_interaction' && (
-          activeMission.layoutTemplate === 'find-one' ? (
+          activeMission.level === 'A' ? (
             <VocabularyTeaching 
-              targetImage={targetProducts[0].image}
-              targetEnglishName={targetProducts[0].englishName}
+              targetImage={isPickTwo && currentEnglishItem ? currentEnglishItem.image : targetProducts[0].image}
+              targetEnglishName={isPickTwo && currentEnglishItem ? currentEnglishItem.englishName : targetProducts[0].englishName}
               englishPhase={englishPhase || 'listen1'}
               isAudioMuted={isAudioMuted}
               onReplay={() => setReplayCount(r => r + 1)}
@@ -652,73 +647,8 @@ function App() {
             />
           ) : (
             <div className="animate-fade-in-up flex-1 flex flex-col justify-center items-center px-6 relative z-10">
-              {activeMission.level === 'A' ? (
-                <>
-                  <MascotBubble 
-                    mascot="Pillow" 
-                    emotion={(englishPhase === 'listen1' || englishPhase === 'listen2') ? 'neutral' : 'asking'} 
-                    message={
-                      englishPhase === 'listen1' ? 'ฟังนะ...' : 
-                      englishPhase === 'listen2' ? `ฟังนะ... ${displayTargetText}!` : 
-                      englishPhase === 'repeat1' ? 'พูดตาม Pillow นะ...' : 
-                      `พูดตาม Pillow นะ... ${displayTargetText}!`
-                    } 
-                    layout="vertical" 
-                    audioEnabled={!isAudioMuted} 
-                    audioLang={(englishPhase === 'listen2' || englishPhase === 'repeat2') ? 'en-US' : 'th-TH'} 
-                    audioRate={(englishPhase === 'listen2' || englishPhase === 'repeat2') ? 0.6 : 1.0}
-                    audioOverrideText={
-                      (englishPhase === 'listen2' || englishPhase === 'repeat2') ? englishTargetText : undefined
-                    }
-                    onReplay={() => setReplayCount(r => r + 1)}
-                  />
-                  <div className="w-full max-w-sm flex flex-col gap-6 mt-14">
-                    <button 
-                      onClick={() => {
-                        if (!isAudioMuted) {
-                          stopSpeech();
-                          import('./utils/audio').then(m => m.playSpeech(englishTargetText, 'en-US', 0.6));
-                        }
-                      }}
-                      className="w-full flex flex-col justify-center items-center p-8 rounded-[3rem] bg-white border-b-[8px] border-sky-200 shadow-[0_15px_30px_rgba(0,0,0,0.08)] active:border-b-0 active:translate-y-2 transition-all hover:scale-[1.02]"
-                    >
-                      <div className={`flex gap-3 bg-sky-50 p-6 rounded-[2.5rem] shadow-[inset_0_4px_8px_rgba(0,0,0,0.05)] border-[3px] border-sky-100 items-center ${(englishPhase === 'listen1' || englishPhase === 'listen2') ? 'animate-[pulse_2s_infinite]' : 'animate-bounce'}`}>
-                        {activeMission.targetColor ? (
-                          <div className={`w-24 h-24 rounded-full shadow-[inset_0_-8px_16px_rgba(0,0,0,0.2)] border-[6px] border-white drop-shadow-md ${
-                            activeMission.targetColor === 'red' ? 'bg-red-500' :
-                            activeMission.targetColor === 'blue' ? 'bg-blue-500' :
-                            activeMission.targetColor === 'yellow' ? 'bg-yellow-400' :
-                            'bg-green-500'
-                          }`} />
-                        ) : (
-                          isPickTwo && currentEnglishItem ? (
-                            <img src={currentEnglishItem.image} alt={currentEnglishItem.englishName} className="w-24 h-24 object-contain drop-shadow-md scale-110" />
-                          ) : (
-                            targetProducts.map(p => (
-                              <img key={p.id} src={p.image} alt={p.englishName} className="w-20 h-20 object-contain drop-shadow-md" />
-                            ))
-                          )
-                        )}
-                      </div>
-                      
-                      {(englishPhase === 'repeat1' || englishPhase === 'repeat2') && (
-                        <div className="mt-6 text-3xl font-display font-bold text-sky-600 animate-pulse flex items-center gap-2">
-                          <span className="text-4xl drop-shadow-sm">🔊</span> {displayTargetText}!
-                        </div>
-                      )}
-                    </button>
-
-                    <button 
-                      onClick={() => handleEnglishAnswer(true)}
-                      className="w-full bg-green-500 text-white font-bold text-3xl py-5 rounded-[2.5rem] shadow-[0_8px_0_rgb(22,163,74)] active:translate-y-2 active:shadow-none transition-all border-[6px] border-green-300 tracking-wide mt-2"
-                    >
-                      เสร็จแล้ว
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <MascotBubble mascot="Pillow" emotion="asking" message={englishHint || "Great job! What did you buy?"} layout="vertical" />
+              <>
+                <MascotBubble mascot="Pillow" emotion="asking" message={englishHint || "Great job! What did you buy?"} layout="vertical" />
                   
                   <div className="w-full max-w-sm flex flex-col gap-6 mt-14">
                     <button 
@@ -744,7 +674,6 @@ function App() {
                     </button>
                   </div>
                 </>
-              )}
             </div>
           )
         )}
