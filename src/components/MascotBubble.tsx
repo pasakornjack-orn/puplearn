@@ -13,6 +13,7 @@ interface MascotBubbleProps {
   audioLang?: 'th-TH' | 'en-US';
   audioRate?: number;
   audioOverrideText?: string;
+  audioId?: string;
   playTrigger?: number;
   onReplay?: () => void;
 }
@@ -27,6 +28,7 @@ export const MascotBubble = ({
   audioLang = 'th-TH', 
   audioRate = 1.0, 
   audioOverrideText, 
+  audioId,
   playTrigger, 
   onReplay 
 }: MascotBubbleProps) => {
@@ -44,13 +46,13 @@ export const MascotBubble = ({
 
   useEffect(() => {
     if (audioEnabled && (audioOverrideText || message)) {
-      playSpeech(audioOverrideText || message, audioLang, audioRate);
+      playSpeech(audioOverrideText || message, audioLang, audioRate, audioId);
     }
-  }, [message, audioEnabled, audioLang, audioRate, audioOverrideText, playTrigger]);
+  }, [message, audioEnabled, audioLang, audioRate, audioOverrideText, playTrigger, audioId]);
 
   const handleReplay = () => {
     if (audioEnabled && (audioOverrideText || message)) {
-      playSpeech(audioOverrideText || message, audioLang, audioRate);
+      playSpeech(audioOverrideText || message, audioLang, audioRate, audioId);
       if (onReplay) onReplay();
     }
   };

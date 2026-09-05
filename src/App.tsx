@@ -15,7 +15,7 @@ import { ProductCard } from './components/ProductCard';
 import { Basket } from './components/Basket';
 import type { MascotType, MascotEmotion } from './config/mascots';
 import { getMascotAsset } from './config/mascots';
-import { stopSpeech, playSpeech, setMasterVolume, playAudioSequence } from './utils/audio';
+import { stopSpeech, playSpeech, setMasterVolume, playAudioSequence, initBgm } from './utils/audio';
 import { getPillowSequence } from './config/audio/manifest';
 
 type GameState = 'home' | 'mission_select' | 'intro' | 'shopping' | 'english_interaction' | 'completed';
@@ -24,7 +24,7 @@ function App() {
   const [gameState, setGameState] = useState<GameState>('home');
   const [activeMission, setActiveMission] = useState<Mission>(mission07);
   const [basket, setBasket] = useState<Product[]>([]);
-  const [hintMessage, setHintMessage] = useState<{ mascot: MascotType; emotion?: MascotEmotion; text: string; timestamp?: number } | null>(null);
+  const [hintMessage, setHintMessage] = useState<{ mascot: MascotType; emotion?: MascotEmotion; text: string; timestamp?: number; audioId?: string } | null>(null);
   const [englishHint, setEnglishHint] = useState<string | null>(null);
   const [incorrectAttempts, setIncorrectAttempts] = useState(0);
   const [englishPhase, setEnglishPhase] = useState<'listen1' | 'listen2' | 'repeat1' | 'repeat2' | null>(null);
@@ -110,20 +110,20 @@ function App() {
                 setGameState('english_interaction');
               }, 2500);
             } else {
-              setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: 'เยี่ยมเลย! หาอีกชิ้นนึงนะ' });
+              setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: 'เยี่ยมเลย! หาอีกชิ้นนึงนะ', audioId: 'mission_A4.first_correct' });
             }
           }, 800);
         } else {
           setBasket(newBasket);
           if (isComplete) {
-            setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: 'เก่งมาก!' });
+            setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: 'เก่งมาก!', audioId: activeMission.id === 'mission_A4' ? 'mission_A4.complete' : `${activeMission.id}.correct` });
             setTimeout(() => {
               setEnglishItemIndex(0);
               setEnglishPhase('listen1');
               setGameState('english_interaction');
             }, 2500);
           } else {
-            setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: 'เยี่ยมเลย! หาอีกชิ้นนึงนะ' });
+            setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: 'เยี่ยมเลย! หาอีกชิ้นนึงนะ', audioId: 'mission_A4.first_correct' });
           }
         }
       } else {
@@ -137,11 +137,11 @@ function App() {
           };
           const tappedColor = thaiColorNames[product.colorName] || 'สีนี้';
           const targetColor = thaiColorNames[activeMission.targetColor] || 'สีเป้าหมาย';
-          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${tappedColor} ลองหา${targetColor}ดูนะ`, timestamp: Date.now() });
+          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${tappedColor} ลองหา${targetColor}ดูนะ`, timestamp: Date.now(), audioId: `${activeMission.id}.wrong_${product.id}` });
         } else if (activeMission.layoutTemplate === 'pick-two') {
-          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${product.name} อันนี้ไม่ใช่ผลไม้นะ`, timestamp: Date.now() });
+          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${product.name} อันนี้ไม่ใช่ผลไม้นะ`, timestamp: Date.now(), audioId: `${activeMission.id}.wrong_${product.id}` });
         } else {
-          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${product.name} ลองหาชิ้นอื่นดูนะ`, timestamp: Date.now() });
+          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${product.name} ลองหาชิ้นอื่นดูนะ`, timestamp: Date.now(), audioId: `${activeMission.id}.wrong_${product.id}` });
         }
       }
       return;
@@ -221,7 +221,7 @@ function App() {
     
     if (!isAudioMuted) {
       stopSpeech();
-      playSpeech(mission.instructionThai, 'th-TH', 1.0);
+      playSpeech(mission.instructionThai, 'th-TH', 1.0, `${mission.id}.instruction`);
     }
     setGameState('shopping');
   };
@@ -383,7 +383,10 @@ function App() {
               {/* CTA */}
               <div className="w-full max-w-sm relative z-20 pb-safe">
                 <button 
-                  onClick={() => setGameState('mission_select')}
+                  onClick={() => {
+                    initBgm();
+                    setGameState('mission_select');
+                  }}
                   className="w-full bg-yellow-400 text-yellow-900 font-bold text-3xl md:text-4xl py-6 rounded-[3rem] shadow-[0_8px_0_rgb(202,138,4),_0_20px_30px_rgba(0,0,0,0.2)] hover:scale-[1.02] active:scale-[0.98] active:translate-y-2 active:shadow-[0_0_0_rgb(202,138,4)] transition-all border-[6px] border-yellow-300 tracking-wide flex justify-center items-center gap-2 animate-pulse-occasional"
                 >
                   <span className="text-2xl md:text-3xl leading-none">▶</span> เริ่มเล่น
@@ -575,14 +578,34 @@ function App() {
                         message={hintMessage.text}
                         audioEnabled={activeMission.level === 'A' && !isAudioMuted}
                         playTrigger={hintMessage.timestamp}
-                        onReplay={() => setReplayCount(r => r + 1)}
+                        audioId={hintMessage.audioId}
+                        onReplay={() => {
+                          setReplayCount(r => r + 1);
+                          if (!isAudioMuted && hintMessage.audioId) {
+                            playSpeech(hintMessage.text, 'th-TH', 1.0, hintMessage.audioId);
+                          } else if (!isAudioMuted) {
+                            playSpeech(hintMessage.text, 'th-TH', 1.0);
+                          }
+                        }}
                       />
                     </div>
                   </div>
                 ) : (
                   <div className="absolute inset-0 px-5 pt-6">
                     <div className="pointer-events-auto">
-                      <MascotBubble mascot="Bingo" emotion="guide" message={activeMission.instructionThai} audioEnabled={activeMission.level === 'A' && !isAudioMuted} onReplay={() => setReplayCount(r => r + 1)} />
+                      <MascotBubble 
+                        mascot="Bingo" 
+                        emotion="guide" 
+                        message={activeMission.instructionThai} 
+                        audioEnabled={activeMission.level === 'A' && !isAudioMuted} 
+                        audioId={`${activeMission.id}.instruction`}
+                        onReplay={() => {
+                          setReplayCount(r => r + 1);
+                          if (!isAudioMuted) {
+                            playSpeech(activeMission.instructionThai, 'th-TH', 1.0, `${activeMission.id}.instruction`);
+                          }
+                        }} 
+                      />
                     </div>
                   </div>
                 )}

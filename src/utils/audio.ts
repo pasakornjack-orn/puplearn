@@ -1,38 +1,97 @@
 import { textToAudioMap, audioFallbackMap } from '../config/audio/manifest';
 
 let globalAudioElement: HTMLAudioElement | null = null;
-let currentSequenceId: number = 0; // To track and cancel sequences
+let currentSequenceId: number = 0;
 
-// Used to check global muting. We must track it or expect the caller to.
-// The caller usually guards with `!isAudioMuted`, but having it centralized helps.
 let isMasterMuted = false;
+
+// BGM State
+let bgmAudioElement: HTMLAudioElement | null = null;
+let bgmGainNode: GainNode | null = null;
+let audioCtx: AudioContext | null = null;
+const BGM_NORMAL_VOL = 0.12;
+const BGM_DUCK_VOL = 0.04;
+const DUCK_TIME = 0.2; 
+const RESTORE_TIME = 0.4;
+
+export const initBgm = () => {
+  if (typeof window === 'undefined' || isMasterMuted || bgmAudioElement) return;
+
+  bgmAudioElement = new Audio('/audio/bgm/supermarket-loop.mp3');
+  bgmAudioElement.loop = true;
+  
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (AudioContextClass) {
+      audioCtx = new AudioContextClass();
+      const source = audioCtx.createMediaElementSource(bgmAudioElement);
+      bgmGainNode = audioCtx.createGain();
+      bgmGainNode.gain.value = BGM_NORMAL_VOL;
+      
+      source.connect(bgmGainNode);
+      bgmGainNode.connect(audioCtx.destination);
+    } else {
+      bgmAudioElement.volume = BGM_NORMAL_VOL;
+    }
+  } catch (e) {
+    bgmAudioElement.volume = BGM_NORMAL_VOL;
+  }
+
+  bgmAudioElement.play().catch(e => console.warn('BGM play blocked', e));
+};
+
+const duckBgm = () => {
+  if (!bgmGainNode || !audioCtx) {
+    if (bgmAudioElement) bgmAudioElement.volume = BGM_DUCK_VOL;
+    return;
+  }
+  // If context is suspended (iOS), try resuming
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  bgmGainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+  bgmGainNode.gain.linearRampToValueAtTime(BGM_DUCK_VOL, audioCtx.currentTime + DUCK_TIME);
+};
+
+const restoreBgm = () => {
+  if (!bgmGainNode || !audioCtx) {
+    if (bgmAudioElement) bgmAudioElement.volume = BGM_NORMAL_VOL;
+    return;
+  }
+  bgmGainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+  bgmGainNode.gain.linearRampToValueAtTime(BGM_NORMAL_VOL, audioCtx.currentTime + RESTORE_TIME);
+};
 
 export const setMasterVolume = (muted: boolean) => {
   isMasterMuted = muted;
   if (muted) {
     stopSpeech();
+    if (bgmAudioElement) bgmAudioElement.pause();
+  } else {
+    if (!bgmAudioElement) initBgm();
+    else bgmAudioElement.play().catch(() => {});
   }
 };
 
-export const playSpeech = (text: string, lang: 'th-TH' | 'en-US' = 'th-TH', rate: number = 1.0) => {
+export const playSpeech = (text: string, lang: 'th-TH' | 'en-US' = 'th-TH', rate: number = 1.0, audioId?: string) => {
   if (typeof window === 'undefined' || isMasterMuted) return;
 
-  // Stop any currently playing audio and cancel active sequences
   stopSpeech();
+  duckBgm();
 
-  const mp3Path = textToAudioMap[text];
+  const mp3Path = (audioId && textToAudioMap[audioId]) || textToAudioMap[text];
   
   if (mp3Path) {
-    playMp3(mp3Path, text, lang, rate);
+    playMp3(mp3Path, text, lang, rate, false);
   } else {
-    // If not in text map (e.g. A2, A3), fallback immediately
-    playFallbackTTS(text, lang, rate);
+    playFallbackTTS(text, lang, rate, false);
   }
 };
 
-const playMp3 = (path: string, fallbackText: string, lang: 'th-TH' | 'en-US', rate: number): Promise<void> => {
+const playMp3 = (path: string, fallbackText: string, lang: 'th-TH' | 'en-US', rate: number, isPartOfSequence: boolean): Promise<void> => {
   return new Promise((resolve) => {
     if (isMasterMuted) {
+      if (!isPartOfSequence) restoreBgm();
       resolve();
       return;
     }
@@ -41,39 +100,52 @@ const playMp3 = (path: string, fallbackText: string, lang: 'th-TH' | 'en-US', ra
       globalAudioElement = new Audio();
     }
     
+    const mySequenceId = currentSequenceId;
+
     globalAudioElement.onended = () => {
+      if (!isPartOfSequence && currentSequenceId === mySequenceId) {
+        restoreBgm();
+      }
       resolve();
     };
 
     globalAudioElement.onerror = () => {
       console.warn(`[PupLearn Audio] Local asset missing or failed: ${path} — using TTS fallback`);
-      playFallbackTTS(fallbackText, lang, rate);
+      playFallbackTTS(fallbackText, lang, rate, isPartOfSequence);
       resolve(); 
     };
 
     globalAudioElement.src = path;
     globalAudioElement.play().catch(e => {
       console.warn(`[PupLearn Audio] Playback blocked or failed: ${path}`, e);
-      playFallbackTTS(fallbackText, lang, rate);
+      playFallbackTTS(fallbackText, lang, rate, isPartOfSequence);
       resolve();
     });
   });
 };
 
-const playFallbackTTS = (text: string, lang: 'th-TH' | 'en-US', rate: number) => {
-  if (!window.speechSynthesis || isMasterMuted) return;
+const playFallbackTTS = (text: string, lang: 'th-TH' | 'en-US', rate: number, isPartOfSequence: boolean) => {
+  if (!window.speechSynthesis || isMasterMuted) {
+    if (!isPartOfSequence) restoreBgm();
+    return;
+  }
 
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = lang;
   
   const voices = window.speechSynthesis.getVoices();
   const preferredVoice = voices.find(v => v.lang.startsWith(lang.split('-')[0]) && (v.name.includes('Female') || v.name.includes('Siri') || v.name.includes('Google')));
-  if (preferredVoice) {
-    utterance.voice = preferredVoice;
-  }
-
+  if (preferredVoice) utterance.voice = preferredVoice;
   utterance.pitch = 1.2;
   utterance.rate = rate;
+
+  const mySequenceId = currentSequenceId;
+  utterance.onend = () => {
+    if (!isPartOfSequence && currentSequenceId === mySequenceId) restoreBgm();
+  };
+  utterance.onerror = () => {
+    if (!isPartOfSequence && currentSequenceId === mySequenceId) restoreBgm();
+  };
 
   window.speechSynthesis.speak(utterance);
 };
@@ -81,7 +153,7 @@ const playFallbackTTS = (text: string, lang: 'th-TH' | 'en-US', rate: number) =>
 export const stopSpeech = () => {
   if (typeof window === 'undefined') return;
   
-  currentSequenceId++; // Incrementing cancels any active sequence
+  currentSequenceId++; 
 
   if (globalAudioElement) {
     globalAudioElement.pause();
@@ -93,6 +165,8 @@ export const stopSpeech = () => {
   if (window.speechSynthesis) {
     window.speechSynthesis.cancel();
   }
+  
+  restoreBgm(); // If we forcefully stop, always restore BGM
 };
 
 export type AudioSequenceItem = {
@@ -103,7 +177,6 @@ export type AudioSequenceItem = {
   pauseAfterMs: number;
 };
 
-// Play a sequence of files, notifying caller on each phase change
 export const playAudioSequence = async (
   sequence: AudioSequenceItem[],
   onPhaseStart: (phaseId: string) => void
@@ -112,20 +185,27 @@ export const playAudioSequence = async (
   
   stopSpeech();
   const sequenceId = currentSequenceId;
+  duckBgm();
 
-  for (const item of sequence) {
+  for (let i = 0; i < sequence.length; i++) {
+    const item = sequence[i];
     if (currentSequenceId !== sequenceId || isMasterMuted) break;
 
     onPhaseStart(item.phaseId);
 
     const fallbackText = item.fallbackText || audioFallbackMap[item.audioPath] || '';
     
-    await playMp3(item.audioPath, fallbackText, item.lang || 'th-TH', 1.0);
+    // Pass true for isPartOfSequence so individual clips don't restore BGM
+    await playMp3(item.audioPath, fallbackText, item.lang || 'th-TH', 1.0, true);
 
     if (currentSequenceId !== sequenceId || isMasterMuted) break;
 
     if (item.pauseAfterMs > 0) {
       await new Promise(r => setTimeout(r, item.pauseAfterMs));
     }
+  }
+
+  if (currentSequenceId === sequenceId) {
+    restoreBgm();
   }
 };
