@@ -32,6 +32,56 @@ export const audioAssets = {
   a4Complete: '/audio/a4/bingo/complete.mp3',
 };
 
+// Primary mapping from audioId to MP3 path – source of truth for production audio
+export const audioIdMap: Record<string, string> = {
+  // Mission 00
+  'mission_00.instruction': audioAssets.m00Instruction,
+  'mission_00.wrong_banana': audioAssets.m00WrongBanana,
+  'mission_00.wrong_soap': audioAssets.m00WrongSoap,
+  'mission_00.wrong_toothbrush': audioAssets.m00WrongToothbrush,
+  'mission_00.correct': audioAssets.m00Correct,
+  // Mission A2
+  'mission_A2.instruction': audioAssets.a2Instruction,
+  'mission_A2.wrong_apple': audioAssets.a2WrongApple,
+  'mission_A2.wrong_soap': audioAssets.a2WrongSoap,
+  'mission_A2.wrong_toothbrush': audioAssets.a2WrongToothbrush,
+  'mission_A2.correct': audioAssets.a2Correct,
+  // Mission A3
+  'mission_A3.instruction': audioAssets.a3Instruction,
+  'mission_A3.wrong_blue': audioAssets.a3WrongBlue,
+  'mission_A3.wrong_green': audioAssets.a3WrongGreen,
+  'mission_A3.wrong_yellow': audioAssets.a3WrongYellow,
+  'mission_A3.correct': audioAssets.a3Correct,
+  // Mission A4
+  'mission_A4.instruction': audioAssets.a4Instruction,
+  'mission_A4.wrong_soap': audioAssets.a4WrongSoap,
+  'mission_A4.wrong_toothbrush': audioAssets.a4WrongToothbrush,
+  'mission_A4.first_correct': audioAssets.a4FirstCorrect,
+  'mission_A4.complete': audioAssets.a4Complete,
+  // Vocabulary (Pillow)
+  'vocab.apple': audioAssets.vocabApple,
+  'vocab.banana': audioAssets.vocabBanana,
+  'vocab.red': audioAssets.vocabRed,
+  // Pillow prompt assets
+  'pillow.listen': audioAssets.pillowListen,
+  'pillow.repeat': audioAssets.pillowRepeat,
+};
+
+/** Resolve MP3 path with priority: audioIdMap → textToAudioMap → null (fallback to TTS) */
+export const resolveAudioPath = (audioId?: string, text?: string): string | null => {
+  if (audioId && audioIdMap[audioId]) {
+    return audioIdMap[audioId];
+  }
+  if (text && textToAudioMap[text]) {
+    return textToAudioMap[text];
+  }
+  return null;
+};
+
+
+
+
+
 // Provide exact mapping via audioId string keys
 export const textToAudioMap: Record<string, string> = {
   // Mission 00

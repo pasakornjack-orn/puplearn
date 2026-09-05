@@ -68,18 +68,18 @@ const VocabularyTeaching: React.FC<VocabularyTeachingProps> = ({
         {/* Mascot grouped unit in lower-middle */}
         <div className="w-full flex-1 flex flex-col justify-center items-center z-20 min-h-[140px]">
           <MascotBubble 
-            mascot="Pillow" 
-            emotion={(englishPhase === 'listen1' || englishPhase === 'listen2') ? 'neutral' : 'asking'} 
-            message={message} 
-            variant="mascot-vocabulary"
-            audioEnabled={false} 
-            audioLang={(englishPhase === 'listen2' || englishPhase === 'repeat2') ? 'en-US' : 'th-TH'} 
-            audioRate={(englishPhase === 'listen2' || englishPhase === 'repeat2') ? 0.65 : 1.0}
-            audioOverrideText={
-              (englishPhase === 'listen2' || englishPhase === 'repeat2') ? targetEnglishName : undefined
-            }
-            onReplay={onReplay}
-          />
+          mascot="Pillow" 
+          emotion={(englishPhase === 'listen1' || englishPhase === 'listen2') ? 'neutral' : 'asking'} 
+          message={message} 
+          variant="mascot-vocabulary"
+          audioEnabled={!isAudioMuted}
+          audioLang={(englishPhase === 'listen2' || englishPhase === 'repeat2') ? 'en-US' : 'th-TH'} 
+          audioRate={(englishPhase === 'listen2' || englishPhase === 'repeat2') ? 0.65 : 1.0}
+          audioOverrideText={
+            (englishPhase === 'listen2' || englishPhase === 'repeat2') ? targetEnglishName : undefined
+          }
+          onReplay={onReplay}
+        />
         </div>
 
         {/* Bottom Area: CTA */}

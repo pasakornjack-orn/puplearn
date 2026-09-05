@@ -1,4 +1,4 @@
-import { textToAudioMap, audioFallbackMap } from '../config/audio/manifest';
+import { audioFallbackMap, resolveAudioPath } from '../config/audio/manifest';
 
 let globalAudioElement: HTMLAudioElement | null = null;
 let currentSequenceId: number = 0;
@@ -88,7 +88,7 @@ export const playSpeech = (text: string, lang: 'th-TH' | 'en-US' = 'th-TH', rate
   stopSpeech();
   duckBgm();
 
-  const mp3Path = (audioId && textToAudioMap[audioId]) || textToAudioMap[text];
+  const mp3Path = resolveAudioPath(audioId, text);
   
   if (mp3Path) {
     playMp3(mp3Path, text, lang, rate, false);
