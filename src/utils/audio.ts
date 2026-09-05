@@ -18,6 +18,7 @@ export const initBgm = () => {
   if (typeof window === 'undefined' || isMasterMuted || bgmAudioElement) return;
 
   bgmAudioElement = new Audio('/audio/bgm/supermarket-loop.mp3');
+  bgmAudioElement.crossOrigin = 'anonymous'; // Prevent CORS silence in some environments
   bgmAudioElement.loop = true;
   
   try {
@@ -30,6 +31,10 @@ export const initBgm = () => {
       
       source.connect(bgmGainNode);
       bgmGainNode.connect(audioCtx.destination);
+      
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
     } else {
       bgmAudioElement.volume = BGM_NORMAL_VOL;
     }
@@ -45,11 +50,11 @@ const duckBgm = () => {
     if (bgmAudioElement) bgmAudioElement.volume = BGM_DUCK_VOL;
     return;
   }
-  // If context is suspended (iOS), try resuming
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
   }
   bgmGainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+  bgmGainNode.gain.setValueAtTime(bgmGainNode.gain.value, audioCtx.currentTime);
   bgmGainNode.gain.linearRampToValueAtTime(BGM_DUCK_VOL, audioCtx.currentTime + DUCK_TIME);
 };
 
@@ -58,7 +63,11 @@ const restoreBgm = () => {
     if (bgmAudioElement) bgmAudioElement.volume = BGM_NORMAL_VOL;
     return;
   }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
   bgmGainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+  bgmGainNode.gain.setValueAtTime(bgmGainNode.gain.value, audioCtx.currentTime);
   bgmGainNode.gain.linearRampToValueAtTime(BGM_NORMAL_VOL, audioCtx.currentTime + RESTORE_TIME);
 };
 
