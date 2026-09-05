@@ -1,6 +1,6 @@
 import { textToAudioMap, audioFallbackMap } from '../config/audio/manifest';
 
-let currentAudio: HTMLAudioElement | null = null;
+let globalAudioElement: HTMLAudioElement | null = null;
 let currentSequenceId: number = 0; // To track and cancel sequences
 
 // Used to check global muting. We must track it or expect the caller to.
@@ -37,21 +37,22 @@ const playMp3 = (path: string, fallbackText: string, lang: 'th-TH' | 'en-US', ra
       return;
     }
     
-    currentAudio = new Audio(path);
-    // Ignore rate for manually generated MP3s to preserve quality
+    if (!globalAudioElement) {
+      globalAudioElement = new Audio();
+    }
     
-    currentAudio.onended = () => {
+    globalAudioElement.onended = () => {
       resolve();
     };
 
-    currentAudio.onerror = () => {
+    globalAudioElement.onerror = () => {
       console.warn(`[PupLearn Audio] Local asset missing or failed: ${path} — using TTS fallback`);
       playFallbackTTS(fallbackText, lang, rate);
-      resolve(); // resolve immediately so sequences don't hang indefinitely on fallback, though TTS timing is lost. 
-      // A more robust approach listens to TTS end, but for fallback it's acceptable.
+      resolve(); 
     };
 
-    currentAudio.play().catch(e => {
+    globalAudioElement.src = path;
+    globalAudioElement.play().catch(e => {
       console.warn(`[PupLearn Audio] Playback blocked or failed: ${path}`, e);
       playFallbackTTS(fallbackText, lang, rate);
       resolve();
@@ -82,12 +83,11 @@ export const stopSpeech = () => {
   
   currentSequenceId++; // Incrementing cancels any active sequence
 
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio.currentTime = 0;
-    currentAudio.onended = null;
-    currentAudio.onerror = null;
-    currentAudio = null;
+  if (globalAudioElement) {
+    globalAudioElement.pause();
+    globalAudioElement.currentTime = 0;
+    globalAudioElement.onended = null;
+    globalAudioElement.onerror = null;
   }
 
   if (window.speechSynthesis) {

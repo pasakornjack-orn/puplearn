@@ -15,7 +15,8 @@ import { ProductCard } from './components/ProductCard';
 import { Basket } from './components/Basket';
 import type { MascotType, MascotEmotion } from './config/mascots';
 import { getMascotAsset } from './config/mascots';
-import { stopSpeech } from './utils/audio';
+import { stopSpeech, playSpeech, setMasterVolume, playAudioSequence } from './utils/audio';
+import { getPillowSequence } from './config/audio/manifest';
 
 type GameState = 'home' | 'mission_select' | 'intro' | 'shopping' | 'english_interaction' | 'completed';
 
@@ -219,10 +220,8 @@ function App() {
     }
     
     if (!isAudioMuted) {
-      import('./utils/audio').then(m => {
-        m.stopSpeech();
-        m.playSpeech(mission.instructionThai, 'th-TH', 1.0);
-      });
+      stopSpeech();
+      playSpeech(mission.instructionThai, 'th-TH', 1.0);
     }
     setGameState('shopping');
   };
@@ -233,13 +232,9 @@ function App() {
         const currentItem = basket[englishItemIndex];
         if (!currentItem) return;
         
-        import('./config/audio/manifest').then(({ getPillowSequence }) => {
-          const sequence = getPillowSequence(currentItem.englishName);
-          import('./utils/audio').then(m => {
-            m.playAudioSequence(sequence, (phaseId) => {
-              setEnglishPhase(phaseId as any);
-            });
-          });
+        const sequence = getPillowSequence(currentItem.englishName);
+        playAudioSequence(sequence, (phaseId) => {
+          setEnglishPhase(phaseId as any);
         });
       } else {
         setEnglishPhase('repeat2');
@@ -322,7 +317,7 @@ function App() {
               stopSpeech();
               setIsAudioMuted(prev => {
                 const next = !prev;
-                import('./utils/audio').then(m => m.setMasterVolume(next));
+                setMasterVolume(next);
                 return next;
               });
             }}
@@ -357,7 +352,7 @@ function App() {
                   stopSpeech();
                   setIsAudioMuted(prev => {
                 const next = !prev;
-                import('./utils/audio').then(m => m.setMasterVolume(next));
+                setMasterVolume(next);
                 return next;
               });
                 }}
@@ -648,7 +643,14 @@ function App() {
               targetEnglishName={isPickTwo && currentEnglishItem ? currentEnglishItem.englishName : targetProducts[0].englishName}
               englishPhase={englishPhase || 'listen1'}
               isAudioMuted={isAudioMuted}
-              onReplay={() => setReplayCount(r => r + 1)}
+              onReplay={() => {
+                setReplayCount(r => r + 1);
+                if (!isAudioMuted) {
+                  const currentItem = isPickTwo && currentEnglishItem ? currentEnglishItem : targetProducts[0];
+                  const sequence = getPillowSequence(currentItem.englishName);
+                  playAudioSequence(sequence, (phaseId) => setEnglishPhase(phaseId as any));
+                }
+              }}
               onComplete={() => handleEnglishAnswer(true)}
             />
           ) : (

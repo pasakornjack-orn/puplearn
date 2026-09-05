@@ -1,5 +1,6 @@
 import React from 'react';
 import { MascotBubble } from './MascotBubble';
+import { playSpeech } from '../utils/audio';
 
 interface VocabularyTeachingProps {
   targetImage: string;
@@ -41,7 +42,7 @@ const VocabularyTeaching: React.FC<VocabularyTeachingProps> = ({
           <button 
             onClick={() => {
               if (!isAudioMuted) {
-                import('../utils/audio').then(m => m.playSpeech(targetEnglishName, 'en-US', 0.6));
+                playSpeech(targetEnglishName, 'en-US', 0.6);
               }
             }}
             className={`relative flex items-center justify-center transition-transform hover:scale-100 active:scale-95 mb-4 z-20 ${isPulsing ? 'animate-[pulse_2s_ease-in-out_infinite]' : 'animate-bounce-slow'}`}
