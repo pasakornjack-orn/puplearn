@@ -227,28 +227,26 @@ function App() {
     setGameState('shopping');
   };
 
-   useEffect(() => {
-    if (gameState === 'english_interaction' && isLevelA && englishPhase === 'listen1') {
-      const timer = setTimeout(() => {
-        setEnglishPhase('listen2');
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-    
-    if (gameState === 'english_interaction' && isLevelA && englishPhase === 'listen2') {
-      const timer = setTimeout(() => {
-        setEnglishPhase('repeat1');
-      }, 2500);
-      return () => clearTimeout(timer);
-    }
-
-    if (gameState === 'english_interaction' && isLevelA && englishPhase === 'repeat1') {
-      const timer = setTimeout(() => {
+  useEffect(() => {
+    if (gameState === 'english_interaction' && isLevelA) {
+      if (!isAudioMuted) {
+        const currentItem = basket[englishItemIndex];
+        if (!currentItem) return;
+        
+        import('./config/audio/manifest').then(({ getPillowSequence }) => {
+          const sequence = getPillowSequence(currentItem.englishName);
+          import('./utils/audio').then(m => {
+            m.playAudioSequence(sequence, (phaseId) => {
+              setEnglishPhase(phaseId as any);
+            });
+          });
+        });
+      } else {
         setEnglishPhase('repeat2');
-      }, 1500);
-      return () => clearTimeout(timer);
+      }
     }
-  }, [gameState, isLevelA, englishPhase, englishItemIndex]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameState, isLevelA, englishItemIndex]); // Exclude isAudioMuted to prevent auto-restart on unmute
 
   const targetProducts = gameState === 'english_interaction' ? basket : [];
   const isPickTwo = activeMission.layoutTemplate === 'pick-two';
@@ -322,7 +320,11 @@ function App() {
           <button 
             onClick={() => {
               stopSpeech();
-              setIsAudioMuted(!isAudioMuted);
+              setIsAudioMuted(prev => {
+                const next = !prev;
+                import('./utils/audio').then(m => m.setMasterVolume(next));
+                return next;
+              });
             }}
             className={`w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-[0_4px_0_rgba(0,0,0,0.05)] border-2 border-white hover:scale-105 active:scale-95 active:translate-y-1 active:shadow-none transition-all ${isAudioMuted ? 'text-gray-400' : 'text-sky-500'}`}
           >
@@ -353,7 +355,11 @@ function App() {
               <button 
                 onClick={() => {
                   stopSpeech();
-                  setIsAudioMuted(!isAudioMuted);
+                  setIsAudioMuted(prev => {
+                const next = !prev;
+                import('./utils/audio').then(m => m.setMasterVolume(next));
+                return next;
+              });
                 }}
                 className={`w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-[0_4px_0_rgba(0,0,0,0.05)] border-2 border-white hover:scale-105 active:scale-95 active:translate-y-1 active:shadow-none transition-all ${isAudioMuted ? 'text-gray-400' : 'text-sky-500'}`}
               >

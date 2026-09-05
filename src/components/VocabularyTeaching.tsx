@@ -71,7 +71,7 @@ const VocabularyTeaching: React.FC<VocabularyTeachingProps> = ({
             emotion={(englishPhase === 'listen1' || englishPhase === 'listen2') ? 'neutral' : 'asking'} 
             message={message} 
             variant="mascot-vocabulary"
-            audioEnabled={!isAudioMuted} 
+            audioEnabled={false} 
             audioLang={(englishPhase === 'listen2' || englishPhase === 'repeat2') ? 'en-US' : 'th-TH'} 
             audioRate={(englishPhase === 'listen2' || englishPhase === 'repeat2') ? 0.65 : 1.0}
             audioOverrideText={
