@@ -117,6 +117,11 @@ const playMp3 = (path: string, fallbackText: string, lang: 'th-TH' | 'en-US', ra
 
     globalAudioElement.src = path;
     globalAudioElement.play().catch(e => {
+      if (e.name === 'AbortError') {
+        // Ignored. The play request was aborted by a subsequent play or pause (e.g., fast tapping).
+        resolve();
+        return;
+      }
       console.warn(`[PupLearn Audio] Playback blocked or failed: ${path}`, e);
       playFallbackTTS(fallbackText, lang, rate, isPartOfSequence);
       resolve();
