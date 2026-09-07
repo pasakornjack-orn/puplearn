@@ -122,33 +122,46 @@ function App() {
           setTimeout(() => {
             setBasket(newBasket);
             setFlyingItem(null);
+            const correctText = activeMission.id === 'mission_A4' ? (activeMission.dialogue?.complete?.text || 'เก่งมาก!') : (activeMission.dialogue?.correct?.text || 'เก่งมาก!');
+            const correctAudioId = activeMission.id === 'mission_A4' ? (activeMission.dialogue?.complete?.audioId || 'mission_A4.complete') : (activeMission.dialogue?.correct?.audioId || `${activeMission.id}.correct`);
+            const firstCorrectText = activeMission.dialogue?.first_correct?.text || 'เยี่ยมเลย! หาอีกชิ้นนึงนะ';
+            const firstCorrectAudioId = activeMission.dialogue?.first_correct?.audioId || 'mission_A4.first_correct';
+
             if (isComplete) {
-              setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: 'เก่งมาก!', audioId: activeMission.id === 'mission_A4' ? 'mission_A4.complete' : `${activeMission.id}.correct` });
+              setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: correctText, audioId: correctAudioId });
               setTimeout(() => {
                 setEnglishItemIndex(0);
                 setEnglishPhase('listen1');
                 setGameState('english_interaction');
               }, 2500);
             } else {
-              setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: 'เยี่ยมเลย! หาอีกชิ้นนึงนะ', audioId: 'mission_A4.first_correct' });
+              setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: firstCorrectText, audioId: firstCorrectAudioId });
             }
           }, 800);
         } else {
           setBasket(newBasket);
+          const correctText = activeMission.id === 'mission_A4' ? (activeMission.dialogue?.complete?.text || 'เก่งมาก!') : (activeMission.dialogue?.correct?.text || 'เก่งมาก!');
+          const correctAudioId = activeMission.id === 'mission_A4' ? (activeMission.dialogue?.complete?.audioId || 'mission_A4.complete') : (activeMission.dialogue?.correct?.audioId || `${activeMission.id}.correct`);
+          const firstCorrectText = activeMission.dialogue?.first_correct?.text || 'เยี่ยมเลย! หาอีกชิ้นนึงนะ';
+          const firstCorrectAudioId = activeMission.dialogue?.first_correct?.audioId || 'mission_A4.first_correct';
+
           if (isComplete) {
-            setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: 'เก่งมาก!', audioId: activeMission.id === 'mission_A4' ? 'mission_A4.complete' : `${activeMission.id}.correct` });
+            setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: correctText, audioId: correctAudioId });
             setTimeout(() => {
               setEnglishItemIndex(0);
               setEnglishPhase('listen1');
               setGameState('english_interaction');
             }, 2500);
           } else {
-            setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: 'เยี่ยมเลย! หาอีกชิ้นนึงนะ', audioId: 'mission_A4.first_correct' });
+            setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: firstCorrectText, audioId: firstCorrectAudioId });
           }
         }
       } else {
         setWrongTaps(prev => prev + 1);
-        if (activeMission.targetColor && product.colorName) {
+        const choice = choiceMap.get(product.id);
+        if (choice?.wrongFeedback?.text) {
+          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: choice.wrongFeedback.text, timestamp: Date.now(), audioId: choice.wrongAudioId });
+        } else if (activeMission.targetColor && product.colorName) {
           const thaiColorNames: Record<string, string> = {
             red: 'สีแดง',
             blue: 'สีฟ้า',
@@ -157,11 +170,11 @@ function App() {
           };
           const tappedColor = thaiColorNames[product.colorName] || 'สีนี้';
           const targetColor = thaiColorNames[activeMission.targetColor] || 'สีเป้าหมาย';
-          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${tappedColor} ลองหา${targetColor}ดูนะ`, timestamp: Date.now(), audioId: choiceMap.get(product.id)?.wrongAudioId });
+          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${tappedColor} ลองหา${targetColor}ดูนะ`, timestamp: Date.now(), audioId: choice?.wrongAudioId });
         } else if (activeMission.layoutTemplate === 'pick-two') {
-          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${product.name} อันนี้ไม่ใช่ผลไม้นะ`, timestamp: Date.now(), audioId: choiceMap.get(product.id)?.wrongAudioId });
+          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${product.name} อันนี้ไม่ใช่ผลไม้นะ`, timestamp: Date.now(), audioId: choice?.wrongAudioId });
         } else {
-          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${product.name} ลองหาชิ้นอื่นดูนะ`, timestamp: Date.now(), audioId: choiceMap.get(product.id)?.wrongAudioId });
+          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${product.name} ลองหาชิ้นอื่นดูนะ`, timestamp: Date.now(), audioId: choice?.wrongAudioId });
         }
       }
       return;
@@ -259,7 +272,11 @@ function App() {
     
     if (!isAudioMuted) {
       stopSpeech();
-      playSpeech(mission.instructionThai, 'th-TH', 1.0, `${mission.id}.instruction`);
+      playSpeech(
+        mission.dialogue?.instruction?.text || mission.instructionThai, 
+        'th-TH', 1.0, 
+        mission.dialogue?.instruction?.audioId || `${mission.id}.instruction`
+      );
     }
     setGameState('shopping');
   };
@@ -634,13 +651,17 @@ function App() {
                       <MascotBubble 
                         mascot="Bingo" 
                         emotion="guide" 
-                        message={activeMission.instructionThai} 
+                        message={activeMission.dialogue?.instruction?.text || activeMission.instructionThai} 
                         audioEnabled={activeMission.level === 'A' && !isAudioMuted} 
-                        audioId={`${activeMission.id}.instruction`}
+                        audioId={activeMission.dialogue?.instruction?.audioId || `${activeMission.id}.instruction`}
                         onReplay={() => {
                           setReplayCount(r => r + 1);
                           if (!isAudioMuted) {
-                            playSpeech(activeMission.instructionThai, 'th-TH', 1.0, `${activeMission.id}.instruction`);
+                            playSpeech(
+                              activeMission.dialogue?.instruction?.text || activeMission.instructionThai, 
+                              'th-TH', 1.0, 
+                              activeMission.dialogue?.instruction?.audioId || `${activeMission.id}.instruction`
+                            );
                           }
                         }} 
                       />

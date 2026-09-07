@@ -10,17 +10,31 @@ export type Product = {
 };
 
 
+export type DialogueFeedback = {
+  text: string;
+  audioId: string;
+};
+
 export type MissionChoice = {
   productId: string;
   wrongAudioId?: string;
+  wrongFeedback?: DialogueFeedback;
 };
 
 export type MissionLevel = 'A' | 'B' | 'C' | 'D';
+
+export type MissionDialogue = {
+  instruction: DialogueFeedback;
+  correct?: DialogueFeedback;
+  first_correct?: DialogueFeedback;
+  complete?: DialogueFeedback;
+};
 
 export type Mission = {
   id: string;
   level: MissionLevel;
   instructionThai: string;
+  dialogue?: MissionDialogue;
   budget?: number; // Optional for Level A
   requiredCategories: { category: string; quantity: number }[];
   targetIds?: string[]; // Used for Level A explicitly
@@ -197,6 +211,10 @@ export const mission00: Mission = {
   id: 'mission_00',
   level: 'A',
   instructionThai: 'ช่วย Bingo หาแอปเปิลหน่อย!',
+  dialogue: {
+    instruction: { text: 'ช่วย Bingo หาแอปเปิลหน่อย!', audioId: 'mission_00.instruction' },
+    correct: { text: 'ใช่แล้ว! แอปเปิล!', audioId: 'mission_00.correct' }
+  },
   requiredCategories: [],
   targetIds: ['apple'],
   targetCount: 1,
@@ -204,9 +222,9 @@ export const mission00: Mission = {
   englishTeachingText: 'Apple',
   choices: [
     { productId: 'apple' },
-    { productId: 'banana', wrongAudioId: 'mission_00.wrong_banana' },
-    { productId: 'soap', wrongAudioId: 'mission_00.wrong_soap' },
-    { productId: 'toothbrushA', wrongAudioId: 'mission_00.wrong_toothbrush' }
+    { productId: 'banana', wrongAudioId: 'mission_00.wrong_banana', wrongFeedback: { text: 'นี่คือกล้วย... ลองหาแอปเปิลอีกทีนะ!', audioId: 'mission_00.wrong_banana' } },
+    { productId: 'soap', wrongAudioId: 'mission_00.wrong_soap', wrongFeedback: { text: 'นี่คือสบู่... อันนี้ไม่ใช่ผลไม่นะ', audioId: 'mission_00.wrong_soap' } },
+    { productId: 'toothbrushA', wrongAudioId: 'mission_00.wrong_toothbrush', wrongFeedback: { text: 'นี่คือแปรงสีฟัน... ลองหาแอปเปิลอีกทีนะ!', audioId: 'mission_00.wrong_toothbrush' } }
   ]
 };
 
@@ -215,6 +233,10 @@ export const missionA2: Mission = {
   id: 'mission_A2',
   level: 'A',
   instructionThai: 'ช่วย Bingo หากล้วยหน่อย!',
+  dialogue: {
+    instruction: { text: 'ช่วย Bingo หากล้วยหน่อย!', audioId: 'mission_A2.instruction' },
+    correct: { text: 'ใช่แล้ว! กล้วย!', audioId: 'mission_A2.correct' }
+  },
   requiredCategories: [],
   targetIds: ['banana'],
   targetCount: 1,
@@ -222,9 +244,9 @@ export const missionA2: Mission = {
   englishTeachingText: 'Banana',
   choices: [
     { productId: 'banana' },
-    { productId: 'apple', wrongAudioId: 'mission_A2.wrong_apple' },
-    { productId: 'soap', wrongAudioId: 'mission_A2.wrong_soap' },
-    { productId: 'toothbrushA', wrongAudioId: 'mission_A2.wrong_toothbrush' }
+    { productId: 'apple', wrongAudioId: 'mission_A2.wrong_apple', wrongFeedback: { text: 'นี่คือแอปเปิล... ลองหากล้วยอีกทีนะ!', audioId: 'mission_A2.wrong_apple' } },
+    { productId: 'soap', wrongAudioId: 'mission_A2.wrong_soap', wrongFeedback: { text: 'นี่คือสบู่... ลองหากล้วยอีกทีนะ!', audioId: 'mission_A2.wrong_soap' } },
+    { productId: 'toothbrushA', wrongAudioId: 'mission_A2.wrong_toothbrush', wrongFeedback: { text: 'นี่คือแปรงสีฟัน... ลองหากล้วยอีกทีนะ!', audioId: 'mission_A2.wrong_toothbrush' } }
   ]
 };
 
@@ -236,6 +258,10 @@ export const missionA3: Mission = {
   id: 'mission_A3',
   level: 'A',
   instructionThai: 'ช่วย Bingo หาของสีแดงหน่อย!',
+  dialogue: {
+    instruction: { text: 'ช่วย Bingo หาของสีแดงหน่อย!', audioId: 'mission_A3.instruction' },
+    correct: { text: 'ใช่แล้ว! สีแดง!', audioId: 'mission_A3.correct' }
+  },
   requiredCategories: [],
   targetColor: 'red',
   targetCount: 1,
@@ -243,9 +269,9 @@ export const missionA3: Mission = {
   englishTeachingText: 'Red',
   choices: [
     { productId: 'redCar' },
-    { productId: 'blueBall', wrongAudioId: 'mission_A3.wrong_blue' },
-    { productId: 'yellowDuck', wrongAudioId: 'mission_A3.wrong_yellow' },
-    { productId: 'greenLeaf', wrongAudioId: 'mission_A3.wrong_green' }
+    { productId: 'blueBall', wrongAudioId: 'mission_A3.wrong_blue', wrongFeedback: { text: 'อันนี้สีฟ้านะ... ลองหาสีแดงอีกที!', audioId: 'mission_A3.wrong_blue' } },
+    { productId: 'yellowDuck', wrongAudioId: 'mission_A3.wrong_yellow', wrongFeedback: { text: 'อันนี้สีเหลืองนะ... ลองหาสีแดงอีกที!', audioId: 'mission_A3.wrong_yellow' } },
+    { productId: 'greenLeaf', wrongAudioId: 'mission_A3.wrong_green', wrongFeedback: { text: 'อันนี้สีเขียวนะ... ลองหาสีแดงอีกที!', audioId: 'mission_A3.wrong_green' } }
   ]
 };
 
@@ -253,6 +279,11 @@ export const missionA4: Mission = {
   id: 'mission_A4',
   level: 'A',
   instructionThai: 'ช่วย Bingo เลือกผลไม้ 2 อย่างหน่อย!',
+  dialogue: {
+    instruction: { text: 'ช่วย Bingo เลือกผลไม้ 2 อย่างหน่อย!', audioId: 'mission_A4.instruction' },
+    first_correct: { text: 'ใช่แล้ว! ผลไม้! หาอีกหนึ่งอย่างนะ!', audioId: 'mission_A4.first_correct' },
+    complete: { text: 'เก่งมาก! ได้ผลไม้สองอย่างแล้ว!', audioId: 'mission_A4.complete' }
+  },
   requiredCategories: [],
   targetIds: ['apple', 'banana'],
   targetCount: 2,
@@ -261,8 +292,8 @@ export const missionA4: Mission = {
   choices: [
     { productId: 'apple' },
     { productId: 'banana' },
-    { productId: 'soap', wrongAudioId: 'mission_A4.wrong_soap' },
-    { productId: 'toothbrushA', wrongAudioId: 'mission_A4.wrong_toothbrush' }
+    { productId: 'soap', wrongAudioId: 'mission_A4.wrong_soap', wrongFeedback: { text: 'นี่คือสบู่... อันนี้ไม่ใช่ผลไม่นะ', audioId: 'mission_A4.wrong_soap' } },
+    { productId: 'toothbrushA', wrongAudioId: 'mission_A4.wrong_toothbrush', wrongFeedback: { text: 'นี่คือแปรงสีฟัน... อันนี้ไม่ใช่ผลไม่นะ', audioId: 'mission_A4.wrong_toothbrush' } }
   ]
 };
 

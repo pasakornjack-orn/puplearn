@@ -24,9 +24,9 @@ const VocabularyTeaching: React.FC<VocabularyTeachingProps> = ({
 
   const message = 
     englishPhase === 'listen1' ? 'ฟังนะ...' : 
-    englishPhase === 'listen2' ? `ฟังนะ... ${displayTargetText}!` : 
+    englishPhase === 'listen2' ? displayTargetText : 
     englishPhase === 'repeat1' ? 'พูดตาม Pillow นะ...' : 
-    `พูดตาม Pillow นะ... ${displayTargetText}!`;
+    displayTargetText;
 
   return (
     <div className="absolute inset-0 flex flex-col z-10 overflow-hidden animate-fade-in pb-safe">
