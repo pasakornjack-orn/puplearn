@@ -6,7 +6,9 @@ import {
   missionA3, 
   missionA4,
   mission07, 
-  productsDB 
+  productsDB,
+  getMissionProducts,
+  type MissionChoice 
 } from './data/missions';
 import ProductDisplayV2 from './components/ProductDisplayV2';
 import VocabularyTeaching from './components/VocabularyTeaching';
@@ -16,6 +18,7 @@ import { Basket } from './components/Basket';
 import type { MascotType, MascotEmotion } from './config/mascots';
 import { getMascotAsset } from './config/mascots';
 import { stopSpeech, playSpeech, setMasterVolume, playAudioSequence, initBgm } from './utils/audio';
+import { audioIdMap } from './config/audio/manifest';
 import { getPillowSequence } from './config/audio/manifest';
 
 type GameState = 'home' | 'mission_select' | 'intro' | 'shopping' | 'english_interaction' | 'completed';
@@ -31,6 +34,8 @@ function App() {
   const [englishItemIndex, setEnglishItemIndex] = useState(0);
   const [flyingItem, setFlyingItem] = useState<{ product: Product; x: number; y: number; targetX?: number; targetY?: number; isFlying: boolean } | null>(null);
   const [shuffledProducts, setShuffledProducts] = useState<Product[]>([]);
+  const [missionProducts, setMissionProducts] = useState<Product[]>([]);
+  const [choiceMap, setChoiceMap] = useState<Map<string, MissionChoice>>(new Map());
   const [completedMissions, setCompletedMissions] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -137,11 +142,11 @@ function App() {
           };
           const tappedColor = thaiColorNames[product.colorName] || 'สีนี้';
           const targetColor = thaiColorNames[activeMission.targetColor] || 'สีเป้าหมาย';
-          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${tappedColor} ลองหา${targetColor}ดูนะ`, timestamp: Date.now(), audioId: `${activeMission.id}.wrong_${product.id}` });
+          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${tappedColor} ลองหา${targetColor}ดูนะ`, timestamp: Date.now(), audioId: choiceMap.get(product.id)?.wrongAudioId });
         } else if (activeMission.layoutTemplate === 'pick-two') {
-          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${product.name} อันนี้ไม่ใช่ผลไม้นะ`, timestamp: Date.now(), audioId: `${activeMission.id}.wrong_${product.id}` });
+          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${product.name} อันนี้ไม่ใช่ผลไม้นะ`, timestamp: Date.now(), audioId: choiceMap.get(product.id)?.wrongAudioId });
         } else {
-          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${product.name} ลองหาชิ้นอื่นดูนะ`, timestamp: Date.now(), audioId: `${activeMission.id}.wrong_${product.id}` });
+          setHintMessage({ mascot: 'Bingo', emotion: 'guide', text: `นี่คือ${product.name} ลองหาชิ้นอื่นดูนะ`, timestamp: Date.now(), audioId: choiceMap.get(product.id)?.wrongAudioId });
         }
       }
       return;
@@ -212,7 +217,25 @@ function App() {
     setActiveMission(mission);
     setBasket([]);
     setHintMessage(null);
-    setShuffledProducts([...mission.products].sort(() => Math.random() - 0.5));
+    const missionProducts = getMissionProducts(mission);
+    setShuffledProducts([...missionProducts].sort(() => Math.random() - 0.5));
+    setMissionProducts(missionProducts);
+    // Build a map from productId to MissionChoice for quick lookup of wrongAudioId
+    const newChoiceMap = new Map<string, MissionChoice>();
+    mission.choices?.forEach(c => newChoiceMap.set(c.productId, c));
+    setChoiceMap(newChoiceMap);
+
+    if (import.meta.env.DEV) {
+      mission.choices?.forEach(c => {
+        if (!productsDB[c.productId]) {
+          console.warn(`[Mission Validation] ${mission.id} unknown productId: ${c.productId}`);
+        }
+        if (c.wrongAudioId && !audioIdMap[c.wrongAudioId]) {
+          console.warn(`[Mission Validation] ${mission.id} missing audio mapping: ${c.wrongAudioId}`);
+        }
+      });
+    }
+
     if (!isSessionMode) {
        // Just resetting if it was played standalone
        setReplayCount(0);
@@ -542,7 +565,7 @@ function App() {
           ['find-one', 'color-hunt', 'pick-two'].includes(activeMission.layoutTemplate || '') ? (
             <div className="absolute inset-0 flex flex-col z-10 animate-fade-in">
               <ProductDisplayV2 
-                mission={{ ...activeMission, products: shuffledProducts.length > 0 ? shuffledProducts : activeMission.products }}
+                mission={{ ...activeMission, products: shuffledProducts.length > 0 ? shuffledProducts : (activeMission.products || missionProducts) }}
                 isAudioMuted={isAudioMuted}
                 onTargetFound={handleAddToCart}
                 onWrongTap={handleAddToCart}
@@ -615,7 +638,7 @@ function App() {
               <div className="flex-1 overflow-y-auto px-5 pb-5 mt-2">
                 <div className="bg-[#FFF4E6] rounded-[3.5rem] border-[10px] border-[#FFE4C4] shadow-[inset_0_15px_30px_rgba(0,0,0,0.06)] p-6 pt-10 min-h-full">
                   <div className="grid grid-cols-2 gap-x-6 gap-y-12 pb-12">
-                    {activeMission.products.map(product => (
+                    {(activeMission.products || missionProducts).map(product => (
                       <ProductCard 
                         key={product.id} 
                         product={product} 

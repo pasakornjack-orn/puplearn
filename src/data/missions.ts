@@ -9,6 +9,12 @@ export type Product = {
   category: 'toothbrush' | 'toothpaste' | 'soap' | 'food' | 'other' | 'toy';
 };
 
+
+export type MissionChoice = {
+  productId: string;
+  wrongAudioId?: string;
+};
+
 export type MissionLevel = 'A' | 'B' | 'C' | 'D';
 
 export type Mission = {
@@ -22,7 +28,10 @@ export type Mission = {
   targetCount?: number; // How many items needed to complete
   layoutTemplate?: 'find-one' | 'color-hunt' | 'pick-two';
   englishTeachingText?: string;
-  products: Product[];
+  // Level A mission-specific choices (source of truth)
+  choices?: MissionChoice[];
+  // Legacy fallback for missions using direct product list (e.g., Mission07)
+  products?: Product[];
 };
 
 export const productsDB: Record<string, Product> = {
@@ -34,7 +43,8 @@ export const productsDB: Record<string, Product> = {
     image: '/products/toothbrush-blue.png',
     color: 'bg-cyan-100 border-cyan-400',
     colorName: 'blue',
-    category: 'toothbrush'
+    category: 'toothbrush',
+
   },
   toothbrushB: {
     id: 'toothbrushB',
@@ -74,7 +84,8 @@ export const productsDB: Record<string, Product> = {
     image: '/products/soap.png',
     color: 'bg-sky-100 border-sky-400',
     colorName: 'blue',
-    category: 'soap'
+    category: 'soap',
+
   },
   apple: {
     id: 'apple',
@@ -84,17 +95,19 @@ export const productsDB: Record<string, Product> = {
     image: '/products/apple.png',
     color: 'bg-red-100 border-red-400',
     colorName: 'red',
-    category: 'food'
+    category: 'food',
+
   },
   banana: {
     id: 'banana',
     name: 'กล้วย',
     englishName: 'Banana',
-    price: 4,
+    price: 5,
     image: '/products/banana.png',
     color: 'bg-yellow-100 border-yellow-400',
     colorName: 'yellow',
-    category: 'food'
+    category: 'food',
+
   },
   redBall: {
     id: 'redBall',
@@ -113,7 +126,7 @@ export const productsDB: Record<string, Product> = {
     price: 10,
     image: '/products/ball-blue.png',
     color: 'bg-blue-50 border-blue-300',
-    colorName: 'blue',
+
     category: 'toy'
   },
   redCar: {
@@ -154,7 +167,8 @@ export const productsDB: Record<string, Product> = {
     image: '/products/rubber-duck-yellow.png',
     color: 'bg-yellow-50 border-yellow-300',
     colorName: 'yellow',
-    category: 'toy'
+    category: 'toy',
+
   },
   greenLeaf: {
     id: 'greenLeaf',
@@ -164,7 +178,8 @@ export const productsDB: Record<string, Product> = {
     image: '/products/leaf-green.png',
     color: 'bg-green-50 border-green-300',
     colorName: 'green',
-    category: 'other'
+    category: 'other',
+
   },
   teddyBear: {
     id: 'teddyBear',
@@ -187,13 +202,14 @@ export const mission00: Mission = {
   targetCount: 1,
   layoutTemplate: 'find-one',
   englishTeachingText: 'Apple',
-  products: [
-    productsDB.apple,
-    productsDB.banana,
-    productsDB.soap,
-    productsDB.toothbrushA
+  choices: [
+    { productId: 'apple' },
+    { productId: 'banana', wrongAudioId: 'mission_00.wrong_banana' },
+    { productId: 'soap', wrongAudioId: 'mission_00.wrong_soap' },
+    { productId: 'toothbrushA', wrongAudioId: 'mission_00.wrong_toothbrush' }
   ]
 };
+
 
 export const missionA2: Mission = {
   id: 'mission_A2',
@@ -204,13 +220,17 @@ export const missionA2: Mission = {
   targetCount: 1,
   layoutTemplate: 'find-one',
   englishTeachingText: 'Banana',
-  products: [
-    productsDB.apple,
-    productsDB.banana,
-    productsDB.soap,
-    productsDB.toothbrushA
+  choices: [
+    { productId: 'banana' },
+    { productId: 'apple', wrongAudioId: 'mission_A2.wrong_apple' },
+    { productId: 'soap', wrongAudioId: 'mission_A2.wrong_soap' },
+    { productId: 'toothbrushA', wrongAudioId: 'mission_A2.wrong_toothbrush' }
   ]
 };
+
+export const getMissionProducts = (mission: Mission): Product[] =>
+  mission.choices?.map(c => productsDB[c.productId]).filter(Boolean) ?? (mission.products || []);
+
 
 export const missionA3: Mission = {
   id: 'mission_A3',
@@ -221,11 +241,11 @@ export const missionA3: Mission = {
   targetCount: 1,
   layoutTemplate: 'find-one', // 2x2 grid
   englishTeachingText: 'Red',
-  products: [
-    productsDB.redCar,
-    productsDB.blueBall,
-    productsDB.yellowDuck,
-    productsDB.greenLeaf
+  choices: [
+    { productId: 'redCar' },
+    { productId: 'blueBall', wrongAudioId: 'mission_A3.wrong_blue' },
+    { productId: 'yellowDuck', wrongAudioId: 'mission_A3.wrong_yellow' },
+    { productId: 'greenLeaf', wrongAudioId: 'mission_A3.wrong_green' }
   ]
 };
 
@@ -238,11 +258,11 @@ export const missionA4: Mission = {
   targetCount: 2,
   layoutTemplate: 'pick-two',
   englishTeachingText: 'Apple!... Banana',
-  products: [
-    productsDB.apple,
-    productsDB.banana,
-    productsDB.soap,
-    productsDB.toothbrushA
+  choices: [
+    { productId: 'apple' },
+    { productId: 'banana' },
+    { productId: 'soap', wrongAudioId: 'mission_A4.wrong_soap' },
+    { productId: 'toothbrushA', wrongAudioId: 'mission_A4.wrong_toothbrush' }
   ]
 };
 

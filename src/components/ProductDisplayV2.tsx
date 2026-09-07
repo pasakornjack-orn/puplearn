@@ -62,7 +62,7 @@ const ProductDisplayV2: React.FC<ProductDisplayV2Props> = ({
     }
   };
 
-  const cols = mission.products.length > 4 ? 3 : 2;
+  const cols = (mission.products || []).length > 4 ? 3 : 2;
 
   return (
     <div className="absolute inset-0 flex flex-col h-full z-10 overflow-hidden animate-fade-in pb-safe">
@@ -74,7 +74,7 @@ const ProductDisplayV2: React.FC<ProductDisplayV2Props> = ({
           <div className="bg-white rounded-[2.5rem] p-5 shadow-[inset_0_4px_15px_rgba(0,0,0,0.03)] border-[4px] border-[#FFF0D9]">
             {/* Dynamic Grid */}
             <div className={`grid grid-cols-${cols} gap-4 w-full`}>
-              {mission.products.map((product) => (
+              {(mission.products || []).map((product) => (
                 <ProductSlot 
                   key={product.id}
                   product={product}
