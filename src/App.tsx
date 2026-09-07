@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { Mission, Product } from './data/missions';
 import { 
   mission00, 
@@ -62,6 +62,21 @@ function App() {
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [expandedGroup, setExpandedGroup] = useState<string | null>('level-a');
   const levelASession = [mission00, missionA2, missionA3, missionA4];
+
+  const hasPlayedSuccessRef = useRef(false);
+
+  useEffect(() => {
+    if (gameState === 'completed') {
+      if (!hasPlayedSuccessRef.current) {
+        hasPlayedSuccessRef.current = true;
+        if (!isAudioMuted) {
+          playSpeech('', 'th-TH', 1.0, 'sfx.success');
+        }
+      }
+    } else {
+      hasPlayedSuccessRef.current = false;
+    }
+  }, [gameState, isAudioMuted]);
 
   const isLevelA = activeMission.level === 'A';
 

@@ -146,7 +146,7 @@ const playMp3 = (path: string, fallbackText: string, lang: 'th-TH' | 'en-US', ra
 };
 
 const playFallbackTTS = (text: string, lang: 'th-TH' | 'en-US', rate: number, isPartOfSequence: boolean) => {
-  if (!window.speechSynthesis || isMasterMuted) {
+  if (!text || !window.speechSynthesis || isMasterMuted) {
     if (!isPartOfSequence) restoreBgm();
     return;
   }

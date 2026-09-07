@@ -1,5 +1,6 @@
 export const audioAssets = {
   bgm: '/audio/bgm/supermarket-loop.mp3',
+  sfxSuccess: '/audio/sfx/success-chime.mp3',
 
   pillowListen: '/audio/vocabulary/listen.mp3',
   pillowRepeat: '/audio/vocabulary/repeat.mp3',
@@ -34,6 +35,7 @@ export const audioAssets = {
 
 // Primary mapping from audioId to MP3 path – source of truth for production audio
 export const audioIdMap: Record<string, string> = {
+  'sfx.success': audioAssets.sfxSuccess,
   // Mission 00
   'mission_00.instruction': audioAssets.m00Instruction,
   'mission_00.wrong_banana': audioAssets.m00WrongBanana,
