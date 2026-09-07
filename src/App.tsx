@@ -108,7 +108,7 @@ function App() {
             setBasket(newBasket);
             setFlyingItem(null);
             if (isComplete) {
-              setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: 'เก่งมาก!' });
+              setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: 'เก่งมาก!', audioId: activeMission.id === 'mission_A4' ? 'mission_A4.complete' : `${activeMission.id}.correct` });
               setTimeout(() => {
                 setEnglishItemIndex(0);
                 setEnglishPhase('listen1');

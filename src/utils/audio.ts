@@ -90,6 +90,13 @@ export const playSpeech = (text: string, lang: 'th-TH' | 'en-US' = 'th-TH', rate
 
   const mp3Path = resolveAudioPath(audioId, text);
   
+  if ((import.meta as any).env?.DEV) {
+    console.log(`[AudioTrace] event: ${audioId || text}`);
+    console.log(`[AudioTrace] audioId: ${audioId || 'none'}`);
+    console.log(`[AudioTrace] path: ${mp3Path || 'none'}`);
+    console.log(`[AudioTrace] fallback: ${!mp3Path}`);
+  }
+  
   if (mp3Path) {
     playMp3(mp3Path, text, lang, rate, false);
   } else {
