@@ -97,14 +97,22 @@ export const playSpeech = (text: string, lang: 'th-TH' | 'en-US' = 'th-TH', rate
     console.log(`[AudioTrace] fallback: ${!mp3Path}`);
   }
   
-  if (mp3Path) {
-    playMp3(mp3Path, text, lang, rate, false);
+  if (audioId) {
+    if (mp3Path) {
+      playMp3(mp3Path, text, lang, rate, false, true);
+    } else {
+      console.error(`[AudioError] audioId: ${audioId} does not exist in audioIdMap. TTS fallback: BLOCKED because explicit audioId was supplied.`);
+    }
   } else {
-    playFallbackTTS(text, lang, rate, false);
+    if (mp3Path) {
+      playMp3(mp3Path, text, lang, rate, false, false);
+    } else {
+      playFallbackTTS(text, lang, rate, false);
+    }
   }
 };
 
-const playMp3 = (path: string, fallbackText: string, lang: 'th-TH' | 'en-US', rate: number, isPartOfSequence: boolean): Promise<void> => {
+const playMp3 = (path: string, fallbackText: string, lang: 'th-TH' | 'en-US', rate: number, isPartOfSequence: boolean, disableTTSFallback: boolean = false): Promise<void> => {
   return new Promise((resolve) => {
     if (isMasterMuted) {
       if (!isPartOfSequence) restoreBgm();
@@ -126,9 +134,14 @@ const playMp3 = (path: string, fallbackText: string, lang: 'th-TH' | 'en-US', ra
     };
 
     globalAudioElement.onerror = () => {
-      console.warn(`[PupLearn Audio] Local asset missing or failed: ${path} — using TTS fallback`);
-      playFallbackTTS(fallbackText, lang, rate, isPartOfSequence);
-      resolve(); 
+      if (disableTTSFallback) {
+        console.error(`[AudioError] MP3 failed to load/play: ${path}. TTS fallback: BLOCKED because explicit audioId was supplied.`);
+        resolve();
+      } else {
+        console.warn(`[PupLearn Audio] Local asset missing or failed: ${path} — using TTS fallback`);
+        playFallbackTTS(fallbackText, lang, rate, isPartOfSequence);
+        resolve(); 
+      }
     };
 
     globalAudioElement.src = path;
@@ -216,8 +229,8 @@ export const playAudioSequence = async (
 
     const fallbackText = item.fallbackText || audioFallbackMap[item.audioPath] || '';
     
-    // Pass true for isPartOfSequence so individual clips don't restore BGM
-    await playMp3(item.audioPath, fallbackText, item.lang || 'th-TH', 1.0, true);
+    // Pass true for isPartOfSequence so individual clips don't restore BGM, and true for disableTTSFallback
+    await playMp3(item.audioPath, fallbackText, item.lang || 'th-TH', 1.0, true, true);
 
     if (currentSequenceId !== sequenceId || isMasterMuted) break;
 
