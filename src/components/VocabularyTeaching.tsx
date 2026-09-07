@@ -28,6 +28,12 @@ const VocabularyTeaching: React.FC<VocabularyTeachingProps> = ({
     englishPhase === 'repeat1' ? 'พูดตาม Pillow นะ...' : 
     displayTargetText;
 
+  const currentAudioId = 
+    englishPhase === 'listen1' ? 'pillow.listen' :
+    englishPhase === 'listen2' ? `vocab.${targetEnglishName.toLowerCase()}` :
+    englishPhase === 'repeat1' ? 'pillow.repeat' :
+    `vocab.${targetEnglishName.toLowerCase()}`;
+
   return (
     <div className="absolute inset-0 flex flex-col z-10 overflow-hidden animate-fade-in pb-safe">
       
@@ -42,7 +48,7 @@ const VocabularyTeaching: React.FC<VocabularyTeachingProps> = ({
           <button 
             onClick={() => {
               if (!isAudioMuted) {
-                playSpeech(targetEnglishName, 'en-US', 0.6);
+                playSpeech(targetEnglishName, 'en-US', 0.6, `vocab.${targetEnglishName.toLowerCase()}`);
               }
             }}
             className={`relative flex items-center justify-center transition-transform hover:scale-100 active:scale-95 mb-4 z-20 ${isPulsing ? 'animate-[pulse_2s_ease-in-out_infinite]' : 'animate-bounce-slow'}`}
@@ -73,6 +79,8 @@ const VocabularyTeaching: React.FC<VocabularyTeachingProps> = ({
           message={message} 
           variant="mascot-vocabulary"
           audioEnabled={!isAudioMuted}
+          audioId={currentAudioId}
+          disableAutoPlay={true}
           audioLang={(englishPhase === 'listen2' || englishPhase === 'repeat2') ? 'en-US' : 'th-TH'} 
           audioRate={(englishPhase === 'listen2' || englishPhase === 'repeat2') ? 0.65 : 1.0}
           audioOverrideText={

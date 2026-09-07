@@ -16,6 +16,7 @@ interface MascotBubbleProps {
   audioId?: string;
   playTrigger?: number;
   onReplay?: () => void;
+  disableAutoPlay?: boolean;
 }
 
 export const MascotBubble = ({ 
@@ -29,8 +30,9 @@ export const MascotBubble = ({
   audioRate = 1.0, 
   audioOverrideText, 
   audioId,
-  playTrigger, 
-  onReplay 
+  playTrigger,
+  onReplay,
+  disableAutoPlay = false
 }: MascotBubbleProps) => {
   
   let currentEmotion = emotion;
@@ -45,10 +47,11 @@ export const MascotBubble = ({
   const imageSrc = getMascotAsset(mascot, currentEmotion as MascotEmotion);
 
   useEffect(() => {
+    if (disableAutoPlay) return;
     if (audioEnabled && (audioOverrideText || message)) {
       playSpeech(audioOverrideText || message, audioLang, audioRate, audioId);
     }
-  }, [message, audioEnabled, audioLang, audioRate, audioOverrideText, playTrigger, audioId]);
+  }, [message, audioEnabled, audioLang, audioRate, audioOverrideText, playTrigger, audioId, disableAutoPlay]);
 
   const handleReplay = () => {
     if (audioEnabled && (audioOverrideText || message)) {

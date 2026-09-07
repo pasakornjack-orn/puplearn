@@ -654,6 +654,7 @@ function App() {
                         message={activeMission.dialogue?.instruction?.text || activeMission.instructionThai} 
                         audioEnabled={activeMission.level === 'A' && !isAudioMuted} 
                         audioId={activeMission.dialogue?.instruction?.audioId || `${activeMission.id}.instruction`}
+                        disableAutoPlay={true}
                         onReplay={() => {
                           setReplayCount(r => r + 1);
                           if (!isAudioMuted) {
