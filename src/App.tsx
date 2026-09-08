@@ -129,11 +129,12 @@ function App() {
 
             if (isComplete) {
               setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: correctText, timestamp: Date.now(), audioId: correctAudioId });
+              const delayToEnglish = activeMission.id === 'mission_A4' ? 4500 : 2500;
               setTimeout(() => {
                 setEnglishItemIndex(0);
                 setEnglishPhase('listen1');
                 setGameState('english_interaction');
-              }, 2500);
+              }, delayToEnglish);
             } else {
               setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: firstCorrectText, timestamp: Date.now(), audioId: firstCorrectAudioId });
             }
@@ -147,11 +148,12 @@ function App() {
 
           if (isComplete) {
             setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: correctText, timestamp: Date.now(), audioId: correctAudioId });
+            const delayToEnglish = activeMission.id === 'mission_A4' ? 4500 : 2500;
             setTimeout(() => {
               setEnglishItemIndex(0);
               setEnglishPhase('listen1');
               setGameState('english_interaction');
-            }, 2500);
+            }, delayToEnglish);
           } else {
             setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: firstCorrectText, timestamp: Date.now(), audioId: firstCorrectAudioId });
           }

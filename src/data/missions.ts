@@ -223,7 +223,7 @@ export const mission00: Mission = {
   choices: [
     { productId: 'apple' },
     { productId: 'banana', wrongAudioId: 'mission_00.wrong_banana', wrongFeedback: { text: 'นี่คือกล้วย... ลองหาแอปเปิลอีกทีนะ!', audioId: 'mission_00.wrong_banana' } },
-    { productId: 'soap', wrongAudioId: 'mission_00.wrong_soap', wrongFeedback: { text: 'นี่คือสบู่... อันนี้ไม่ใช่ผลไม่นะ', audioId: 'mission_00.wrong_soap' } },
+    { productId: 'soap', wrongAudioId: 'mission_00.wrong_soap', wrongFeedback: { text: 'นี่คือสบู่... อันนี้ไม่ใช่ผลไม้นะ', audioId: 'mission_00.wrong_soap' } },
     { productId: 'toothbrushA', wrongAudioId: 'mission_00.wrong_toothbrush', wrongFeedback: { text: 'นี่คือแปรงสีฟัน... ลองหาแอปเปิลอีกทีนะ!', audioId: 'mission_00.wrong_toothbrush' } }
   ]
 };
@@ -292,8 +292,8 @@ export const missionA4: Mission = {
   choices: [
     { productId: 'apple' },
     { productId: 'banana' },
-    { productId: 'soap', wrongAudioId: 'mission_A4.wrong_soap', wrongFeedback: { text: 'นี่คือสบู่... อันนี้ไม่ใช่ผลไม่นะ', audioId: 'mission_A4.wrong_soap' } },
-    { productId: 'toothbrushA', wrongAudioId: 'mission_A4.wrong_toothbrush', wrongFeedback: { text: 'นี่คือแปรงสีฟัน... อันนี้ไม่ใช่ผลไม่นะ', audioId: 'mission_A4.wrong_toothbrush' } }
+    { productId: 'soap', wrongAudioId: 'mission_A4.wrong_soap', wrongFeedback: { text: 'นี่คือสบู่... อันนี้ไม่ใช่ผลไม้นะ', audioId: 'mission_A4.wrong_soap' } },
+    { productId: 'toothbrushA', wrongAudioId: 'mission_A4.wrong_toothbrush', wrongFeedback: { text: 'นี่คือแปรงสีฟัน... อันนี้ไม่ใช่ผลไม้นะ', audioId: 'mission_A4.wrong_toothbrush' } }
   ]
 };
 
