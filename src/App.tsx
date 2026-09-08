@@ -13,6 +13,7 @@ import {
 import ProductDisplayV2 from './components/ProductDisplayV2';
 import VocabularyTeaching from './components/VocabularyTeaching';
 import { MascotBubble } from './components/MascotBubble';
+import { MissionEngine } from './engine/MissionEngine';
 import { ProductCard } from './components/ProductCard';
 import { Basket } from './components/Basket';
 import type { MascotType, MascotEmotion } from './config/mascots';
@@ -615,8 +616,37 @@ function App() {
         )}
         
 
+        {/* MISSION 00 ENGINE SHELL */}
+        {(gameState === 'shopping' || gameState === 'english_interaction') && activeMission.id === 'mission_00' && (
+          <div className="absolute inset-0 flex flex-col z-10 animate-fade-in">
+            <MissionEngine 
+              mission={activeMission} 
+              isAudioMuted={isAudioMuted} 
+              onComplete={(wrong, replay) => {
+                setWrongTaps(wrong);
+                setReplayCount(replay);
+                setGameState('completed');
+                const progressData = {
+                  missionId: activeMission.id,
+                  status: 'completed',
+                  hintsUsed: 0,
+                  wrongTaps: wrong,
+                  replayAudioTaps: replay,
+                  isSessionMode,
+                  completedAt: new Date().toISOString()
+                };
+                localStorage.setItem(`puplearn_${activeMission.id}_progress`, JSON.stringify(progressData));
+                
+                if (isSessionMode && sessionIndex === levelASession.length - 1) {
+                  localStorage.setItem('puplearn_level_A_session_completed', new Date().toISOString());
+                }
+              }}
+            />
+          </div>
+        )}
+
         {/* STATE: SHOPPING */}
-        {gameState === 'shopping' && (
+        {gameState === 'shopping' && activeMission.id !== 'mission_00' && (
           ['find-one', 'color-hunt', 'pick-two'].includes(activeMission.layoutTemplate || '') ? (
             <div className="absolute inset-0 flex flex-col z-10 animate-fade-in">
               <ProductDisplayV2 
@@ -742,7 +772,7 @@ function App() {
         )}
 
         {/* STATE: ENGLISH INTERACTION */}
-        {gameState === 'english_interaction' && (
+        {gameState === 'english_interaction' && activeMission.id !== 'mission_00' && (
           activeMission.level === 'A' ? (
             <VocabularyTeaching 
               targetImage={isPickTwo && currentEnglishItem ? currentEnglishItem.image : targetProducts[0].image}

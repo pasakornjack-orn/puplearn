@@ -42,6 +42,7 @@ export type Mission = {
   targetCount?: number; // How many items needed to complete
   layoutTemplate?: 'find-one' | 'color-hunt' | 'pick-two';
   englishTeachingText?: string;
+  vocabularyConfigs?: { text: string; audioId: string }[];
   // Level A mission-specific choices (source of truth)
   choices?: MissionChoice[];
   // Legacy fallback for missions using direct product list (e.g., Mission07)
@@ -207,20 +208,21 @@ export const productsDB: Record<string, Product> = {
   }
 };
 
-export const mission00: Mission = {
-  id: 'mission_00',
-  level: 'A',
-  instructionThai: 'ช่วย Bingo หาแอปเปิลหน่อย!',
-  dialogue: {
-    instruction: { text: 'ช่วย Bingo หาแอปเปิลหน่อย!', audioId: 'mission_00.instruction' },
-    correct: { text: 'ใช่แล้ว! แอปเปิล!', audioId: 'mission_00.correct' }
-  },
-  requiredCategories: [],
-  targetIds: ['apple'],
-  targetCount: 1,
-  layoutTemplate: 'find-one',
-  englishTeachingText: 'Apple',
-  choices: [
+  export const mission00: Mission = {
+    id: 'mission_00',
+    level: 'A',
+    instructionThai: 'ช่วย Bingo หาแอปเปิลหน่อย!',
+    dialogue: {
+      instruction: { text: 'ช่วย Bingo หาแอปเปิลหน่อย!', audioId: 'mission_00.instruction' },
+      correct: { text: 'ใช่แล้ว! แอปเปิล!', audioId: 'mission_00.correct' }
+    },
+    requiredCategories: [],
+    targetIds: ['apple'],
+    targetCount: 1,
+    layoutTemplate: 'find-one',
+    englishTeachingText: 'Apple',
+    vocabularyConfigs: [{ text: 'Apple', audioId: 'vocab.apple' }],
+    choices: [
     { productId: 'apple' },
     { productId: 'banana', wrongAudioId: 'mission_00.wrong_banana', wrongFeedback: { text: 'นี่คือกล้วย... ลองหาแอปเปิลอีกทีนะ!', audioId: 'mission_00.wrong_banana' } },
     { productId: 'soap', wrongAudioId: 'mission_00.wrong_soap', wrongFeedback: { text: 'นี่คือสบู่... อันนี้ไม่ใช่ผลไม้นะ', audioId: 'mission_00.wrong_soap' } },
