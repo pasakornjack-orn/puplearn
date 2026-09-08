@@ -66,6 +66,24 @@ function App() {
   const hasPlayedSuccessRef = useRef(false);
 
   useEffect(() => {
+    const handleFirstInteraction = () => {
+      if (!isAudioMuted && gameState === 'home') {
+        initBgm();
+      }
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+    };
+
+    document.addEventListener('click', handleFirstInteraction, { once: true });
+    document.addEventListener('touchstart', handleFirstInteraction, { once: true });
+
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+    };
+  }, [isAudioMuted, gameState]);
+
+  useEffect(() => {
     if (gameState === 'completed') {
       if (!hasPlayedSuccessRef.current) {
         hasPlayedSuccessRef.current = true;
