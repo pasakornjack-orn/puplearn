@@ -208,7 +208,7 @@ export const productsDB: Record<string, Product> = {
   }
 };
 
-  export const mission00: Mission = {
+export const mission00: Mission = {
     id: 'mission_00',
     level: 'A',
     instructionThai: 'ช่วย Bingo หาแอปเปิลหน่อย!',
@@ -232,19 +232,20 @@ export const productsDB: Record<string, Product> = {
 
 
 export const missionA2: Mission = {
-  id: 'mission_A2',
-  level: 'A',
-  instructionThai: 'ช่วย Bingo หากล้วยหน่อย!',
-  dialogue: {
-    instruction: { text: 'ช่วย Bingo หากล้วยหน่อย!', audioId: 'mission_A2.instruction' },
-    correct: { text: 'ใช่แล้ว! กล้วย!', audioId: 'mission_A2.correct' }
-  },
-  requiredCategories: [],
-  targetIds: ['banana'],
-  targetCount: 1,
-  layoutTemplate: 'find-one',
-  englishTeachingText: 'Banana',
-  choices: [
+    id: 'mission_A2',
+    level: 'A',
+    instructionThai: 'ช่วย Bingo หากล้วยหน่อย!',
+    dialogue: {
+      instruction: { text: 'ช่วย Bingo หากล้วยหน่อย!', audioId: 'mission_A2.instruction' },
+      correct: { text: 'ใช่แล้ว! กล้วย!', audioId: 'mission_A2.correct' }
+    },
+    requiredCategories: [],
+    targetIds: ['banana'],
+    targetCount: 1,
+    layoutTemplate: 'find-one',
+    englishTeachingText: 'Banana',
+    vocabularyConfigs: [{ text: 'Banana', audioId: 'vocab.banana' }],
+    choices: [
     { productId: 'banana' },
     { productId: 'apple', wrongAudioId: 'mission_A2.wrong_apple', wrongFeedback: { text: 'นี่คือแอปเปิล... ลองหากล้วยอีกทีนะ!', audioId: 'mission_A2.wrong_apple' } },
     { productId: 'soap', wrongAudioId: 'mission_A2.wrong_soap', wrongFeedback: { text: 'นี่คือสบู่... ลองหากล้วยอีกทีนะ!', audioId: 'mission_A2.wrong_soap' } },

@@ -50,7 +50,7 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
   useEffect(() => {
     if (phase === 'english_interaction') {
       if (!isAudioMuted) {
-        const teachingText = mission.vocabularyConfigs?.[0]?.text || 'Apple';
+        const teachingText = mission.vocabularyConfigs?.[0]?.text || '';
         const sequence = getPillowSequence(teachingText);
         playAudioSequence(sequence, (phaseId) => {
           setEnglishPhase(phaseId as any);
@@ -176,7 +176,7 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
           onReplay={() => {
             setReplayCount(r => r + 1);
             if (!isAudioMuted) {
-              const teachingText = mission.vocabularyConfigs?.[0]?.text || 'Apple';
+              const teachingText = mission.vocabularyConfigs?.[0]?.text || '';
               const sequence = getPillowSequence(teachingText);
               playAudioSequence(sequence, (phaseId) => setEnglishPhase(phaseId as any));
             }

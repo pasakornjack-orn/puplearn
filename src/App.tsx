@@ -617,7 +617,7 @@ function App() {
         
 
         {/* MISSION 00 ENGINE SHELL */}
-        {(gameState === 'shopping' || gameState === 'english_interaction') && activeMission.id === 'mission_00' && (
+        {(gameState === 'shopping' || gameState === 'english_interaction') && ['mission_00', 'mission_A2'].includes(activeMission.id) && (
           <div className="absolute inset-0 flex flex-col z-10 animate-fade-in">
             <MissionEngine 
               mission={activeMission} 
@@ -646,7 +646,7 @@ function App() {
         )}
 
         {/* STATE: SHOPPING */}
-        {gameState === 'shopping' && activeMission.id !== 'mission_00' && (
+        {gameState === 'shopping' && !['mission_00', 'mission_A2'].includes(activeMission.id) && (
           ['find-one', 'color-hunt', 'pick-two'].includes(activeMission.layoutTemplate || '') ? (
             <div className="absolute inset-0 flex flex-col z-10 animate-fade-in">
               <ProductDisplayV2 
@@ -772,7 +772,7 @@ function App() {
         )}
 
         {/* STATE: ENGLISH INTERACTION */}
-        {gameState === 'english_interaction' && activeMission.id !== 'mission_00' && (
+        {gameState === 'english_interaction' && !['mission_00', 'mission_A2'].includes(activeMission.id) && (
           activeMission.level === 'A' ? (
             <VocabularyTeaching 
               targetImage={isPickTwo && currentEnglishItem ? currentEnglishItem.image : targetProducts[0].image}
