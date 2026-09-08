@@ -47,7 +47,7 @@ export type Mission = {
     equals: string | number;
   };
   englishTeachingText?: string;
-  vocabularyConfigs?: { text: string; audioId: string }[];
+  vocabularyConfigs?: { productId?: string; text: string; audioId: string }[];
   // Level A mission-specific choices (source of truth)
   choices?: MissionChoice[];
   // Legacy fallback for missions using direct product list (e.g., Mission07)
@@ -303,6 +303,10 @@ export const missionA4: Mission = {
   targetCount: 2,
   layoutTemplate: 'pick-two',
   englishTeachingText: 'Apple!... Banana',
+  vocabularyConfigs: [
+    { productId: 'apple', text: 'Apple', audioId: 'vocab.apple' },
+    { productId: 'banana', text: 'Banana', audioId: 'vocab.banana' }
+  ],
   choices: [
     { productId: 'apple' },
     { productId: 'banana' },

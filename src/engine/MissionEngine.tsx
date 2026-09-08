@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import type { Mission, Product } from '../data/missions';
 import { productsDB } from '../data/missions';
 import ProductDisplayV2 from '../components/ProductDisplayV2';
@@ -21,6 +21,7 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
   const [flyingItem, setFlyingItem] = useState<{ product: Product; x: number; y: number; targetX?: number; targetY?: number; isFlying: boolean } | null>(null);
   
   const [englishPhase, setEnglishPhase] = useState<'listen1' | 'listen2' | 'repeat1' | 'repeat2' | null>(null);
+  const [englishItemIndex, setEnglishItemIndex] = useState(0);
   
   const [shuffledProducts, setShuffledProducts] = useState<Product[]>([]);
   const [replayCount, setReplayCount] = useState(0);
@@ -30,7 +31,7 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
     if (import.meta.env.DEV) {
       if (!mission.choices?.length) console.warn(`[Mission Validation] ${mission.id} missing choices`);
       if (!mission.dialogue?.instruction) console.warn(`[Mission Validation] ${mission.id} missing instruction dialogue`);
-      if (!mission.dialogue?.correct) console.warn(`[Mission Validation] ${mission.id} missing correct dialogue`);
+      if (!mission.dialogue?.correct && !mission.dialogue?.complete) console.warn(`[Mission Validation] ${mission.id} missing correct/complete dialogue`);
       if (!mission.vocabularyConfigs?.length) console.warn(`[Mission Validation] ${mission.id} missing vocabularyConfigs`);
       
       if (mission.validation?.kind === 'attribute') {
@@ -54,6 +55,7 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
     setHintMessage(null);
     setPhase('shopping');
     setEnglishPhase(null);
+    setEnglishItemIndex(0);
     setReplayCount(0);
     setWrongTaps(0);
     setFlyingItem(null);
@@ -71,7 +73,9 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
   useEffect(() => {
     if (phase === 'english_interaction') {
       if (!isAudioMuted) {
-        const teachingText = mission.vocabularyConfigs?.[0]?.text || '';
+        const currentItem = basket[englishItemIndex];
+        const vocabConfig = mission.vocabularyConfigs?.find(v => v.productId === currentItem?.id) || mission.vocabularyConfigs?.[0];
+        const teachingText = vocabConfig?.text || '';
         const sequence = getPillowSequence(teachingText);
         playAudioSequence(sequence, (phaseId) => {
           setEnglishPhase(phaseId as any);
@@ -81,7 +85,7 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase]); 
+  }, [phase, englishItemIndex]); 
 
   const validateChoice = (mission: Mission, product: Product) => {
     if (mission.validation?.kind === 'attribute') {
@@ -100,6 +104,7 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
     }
     
     const newBasket = [...basket, product];
+    const isComplete = newBasket.length >= (mission.targetCount || 1);
     
     if (event) {
       const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
@@ -129,24 +134,40 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
       setTimeout(() => {
         setBasket(newBasket);
         setFlyingItem(null);
-        triggerSuccess();
+        if (isComplete) {
+          triggerSuccess();
+        } else {
+          triggerIntermediateSuccess();
+        }
       }, 800);
     } else {
       setBasket(newBasket);
-      triggerSuccess();
+      if (isComplete) {
+        triggerSuccess();
+      } else {
+        triggerIntermediateSuccess();
+      }
     }
   };
 
   const triggerSuccess = () => {
-    const correctText = mission.dialogue?.correct?.text || 'เก่งมาก!';
-    const correctAudioId = mission.dialogue?.correct?.audioId || `${mission.id}.correct`;
+    const isPickN = (mission.targetCount || 1) > 1;
+    const correctText = isPickN ? (mission.dialogue?.complete?.text || 'เก่งมาก!') : (mission.dialogue?.correct?.text || 'เก่งมาก!');
+    const correctAudioId = isPickN ? (mission.dialogue?.complete?.audioId || `${mission.id}.complete`) : (mission.dialogue?.correct?.audioId || `${mission.id}.correct`);
     
     setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: correctText, timestamp: Date.now(), audioId: correctAudioId });
     
     setTimeout(() => {
+      setEnglishItemIndex(0);
       setEnglishPhase('listen1');
       setPhase('english_interaction');
-    }, 2500);
+    }, isPickN ? 4500 : 2500);
+  };
+
+  const triggerIntermediateSuccess = () => {
+    const firstCorrectText = mission.dialogue?.first_correct?.text || 'เยี่ยมเลย! หาอีกชิ้นนึงนะ';
+    const firstCorrectAudioId = mission.dialogue?.first_correct?.audioId || `${mission.id}.first_correct`;
+    setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: firstCorrectText, timestamp: Date.now(), audioId: firstCorrectAudioId });
   };
 
   const handleWrongTap = (product: Product) => {
@@ -158,8 +179,13 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
   };
 
   const handleEnglishAnswer = () => {
-    stopSpeech();
-    onComplete(wrongTaps, replayCount);
+    if (englishItemIndex < basket.length - 1) {
+      setEnglishItemIndex(prev => prev + 1);
+      setEnglishPhase('listen1');
+    } else {
+      stopSpeech();
+      onComplete(wrongTaps, replayCount);
+    }
   };
 
   return (
@@ -197,14 +223,15 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
 
       {phase === 'english_interaction' && (
         <VocabularyTeaching 
-          targetImage={basket[0]?.image}
-          targetEnglishName={mission.vocabularyConfigs?.[0]?.text || 'Word'}
+          targetImage={basket[englishItemIndex]?.image}
+          targetEnglishName={mission.vocabularyConfigs?.find(v => v.productId === basket[englishItemIndex]?.id)?.text || mission.vocabularyConfigs?.[0]?.text || 'Word'}
           englishPhase={englishPhase || 'listen1'}
           isAudioMuted={isAudioMuted}
           onReplay={() => {
             setReplayCount(r => r + 1);
             if (!isAudioMuted) {
-              const teachingText = mission.vocabularyConfigs?.[0]?.text || '';
+              const vocabConfig = mission.vocabularyConfigs?.find(v => v.productId === basket[englishItemIndex]?.id) || mission.vocabularyConfigs?.[0];
+              const teachingText = vocabConfig?.text || '';
               const sequence = getPillowSequence(teachingText);
               playAudioSequence(sequence, (phaseId) => setEnglishPhase(phaseId as any));
             }
