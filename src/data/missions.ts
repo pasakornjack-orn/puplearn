@@ -41,6 +41,11 @@ export type Mission = {
   targetColor?: string; // Used for color hunt
   targetCount?: number; // How many items needed to complete
   layoutTemplate?: 'find-one' | 'color-hunt' | 'pick-two';
+  validation?: {
+    kind: 'attribute';
+    field: keyof Product;
+    equals: string | number;
+  };
   englishTeachingText?: string;
   vocabularyConfigs?: { text: string; audioId: string }[];
   // Level A mission-specific choices (source of truth)
@@ -257,20 +262,26 @@ export const getMissionProducts = (mission: Mission): Product[] =>
   mission.choices?.map(c => productsDB[c.productId]).filter(Boolean) ?? (mission.products || []);
 
 
-export const missionA3: Mission = {
-  id: 'mission_A3',
-  level: 'A',
-  instructionThai: 'ช่วย Bingo หาของสีแดงหน่อย!',
-  dialogue: {
-    instruction: { text: 'ช่วย Bingo หาของสีแดงหน่อย!', audioId: 'mission_A3.instruction' },
-    correct: { text: 'ใช่แล้ว! สีแดง!', audioId: 'mission_A3.correct' }
-  },
-  requiredCategories: [],
-  targetColor: 'red',
-  targetCount: 1,
-  layoutTemplate: 'find-one', // 2x2 grid
-  englishTeachingText: 'Red',
-  choices: [
+  export const missionA3: Mission = {
+    id: 'mission_A3',
+    level: 'A',
+    instructionThai: 'ช่วย Bingo หาของสีแดงหน่อย!',
+    dialogue: {
+      instruction: { text: 'ช่วย Bingo หาของสีแดงหน่อย!', audioId: 'mission_A3.instruction' },
+      correct: { text: 'ใช่แล้ว! สีแดง!', audioId: 'mission_A3.correct' }
+    },
+    requiredCategories: [],
+    targetColor: 'red',
+    targetCount: 1,
+    layoutTemplate: 'color-hunt',
+    validation: {
+      kind: 'attribute',
+      field: 'colorName',
+      equals: 'red'
+    },
+    englishTeachingText: 'Red',
+    vocabularyConfigs: [{ text: 'Red', audioId: 'vocab.red' }],
+    choices: [
     { productId: 'redCar' },
     { productId: 'blueBall', wrongAudioId: 'mission_A3.wrong_blue', wrongFeedback: { text: 'อันนี้สีฟ้านะ... ลองหาสีแดงอีกที!', audioId: 'mission_A3.wrong_blue' } },
     { productId: 'yellowDuck', wrongAudioId: 'mission_A3.wrong_yellow', wrongFeedback: { text: 'อันนี้สีเหลืองนะ... ลองหาสีแดงอีกที!', audioId: 'mission_A3.wrong_yellow' } },

@@ -4,7 +4,7 @@ import { productsDB } from '../data/missions';
 import ProductDisplayV2 from '../components/ProductDisplayV2';
 import VocabularyTeaching from '../components/VocabularyTeaching';
 import { playSpeech, playAudioSequence, stopSpeech } from '../utils/audio';
-import { getPillowSequence } from '../config/audio/manifest';
+import { getPillowSequence, audioIdMap } from '../config/audio/manifest';
 
 interface MissionEngineProps {
   mission: Mission;
@@ -27,6 +27,27 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
   const [wrongTaps, setWrongTaps] = useState(0);
 
   useEffect(() => {
+    if (import.meta.env.DEV) {
+      if (!mission.choices?.length) console.warn(`[Mission Validation] ${mission.id} missing choices`);
+      if (!mission.dialogue?.instruction) console.warn(`[Mission Validation] ${mission.id} missing instruction dialogue`);
+      if (!mission.dialogue?.correct) console.warn(`[Mission Validation] ${mission.id} missing correct dialogue`);
+      if (!mission.vocabularyConfigs?.length) console.warn(`[Mission Validation] ${mission.id} missing vocabularyConfigs`);
+      
+      if (mission.validation?.kind === 'attribute') {
+        if (!mission.validation.field) console.warn(`[Mission Validation] ${mission.id} attribute validation missing field`);
+        if (!mission.validation.equals) console.warn(`[Mission Validation] ${mission.id} attribute validation missing equals value`);
+      }
+
+      mission.choices?.forEach(c => {
+        if (!productsDB[c.productId]) {
+          console.warn(`[Mission Validation] ${mission.id} unknown productId: ${c.productId}`);
+        }
+        if (c.wrongAudioId && !audioIdMap[c.wrongAudioId]) {
+          console.warn(`[Mission Validation] ${mission.id} missing audio mapping: ${c.wrongAudioId}`);
+        }
+      });
+    }
+
     const products = mission.choices?.map(c => productsDB[c.productId]).filter(Boolean) || [];
     setShuffledProducts([...products].sort(() => Math.random() - 0.5));
     setBasket([]);
@@ -62,10 +83,17 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]); 
 
+  const validateChoice = (mission: Mission, product: Product) => {
+    if (mission.validation?.kind === 'attribute') {
+      return product[mission.validation.field] === mission.validation.equals;
+    }
+    return mission.targetIds?.includes(product.id) || false;
+  };
+
   const handleTargetFound = (product: Product, event: React.MouseEvent) => {
     if (basket.some(p => p.id === product.id)) return;
     
-    const isTarget = mission.targetIds?.includes(product.id);
+    const isTarget = validateChoice(mission, product);
     if (!isTarget) {
       handleWrongTap(product);
       return; 
