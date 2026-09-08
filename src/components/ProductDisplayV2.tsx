@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Mission, Product } from '../data/missions';
 import { MascotBubble } from './MascotBubble';
+import { playSpeech } from '../utils/audio';
 
 import ToyBasket from './ToyBasket';
 
@@ -9,7 +10,7 @@ interface ProductDisplayV2Props {
   isAudioMuted: boolean;
   onTargetFound: (target: Product, event: React.MouseEvent) => void;
   onWrongTap: (product: Product, event: React.MouseEvent) => void;
-  hintMessage: { text: string; mascot: any; emotion?: any; timestamp?: number } | null;
+  hintMessage: { text: string; mascot: any; emotion?: any; timestamp?: number; audioId?: string } | null;
   replayCount: number;
   setReplayCount: React.Dispatch<React.SetStateAction<number>>;
   basketItems: Product[];
@@ -101,7 +102,15 @@ const ProductDisplayV2: React.FC<ProductDisplayV2Props> = ({
                 variant="mascot-gameplay-v2"
                 audioEnabled={!isAudioMuted}
                 playTrigger={hintMessage.timestamp}
-                onReplay={() => setReplayCount(r => r + 1)}
+                audioId={hintMessage.audioId}
+                onReplay={() => {
+                  setReplayCount(r => r + 1);
+                  if (!isAudioMuted && hintMessage.audioId) {
+                    playSpeech(hintMessage.text, 'th-TH', 1.0, hintMessage.audioId);
+                  } else if (!isAudioMuted) {
+                    playSpeech(hintMessage.text, 'th-TH', 1.0);
+                  }
+                }}
               />
             </div>
           ) : (
@@ -109,10 +118,21 @@ const ProductDisplayV2: React.FC<ProductDisplayV2Props> = ({
               <MascotBubble 
                 mascot="Bingo" 
                 emotion="guide" 
-                message={mission.instructionThai} 
+                message={mission.dialogue?.instruction?.text || mission.instructionThai} 
                 variant="mascot-gameplay-v2"
                 audioEnabled={!isAudioMuted} 
-                onReplay={() => setReplayCount(r => r + 1)} 
+                audioId={mission.dialogue?.instruction?.audioId || `${mission.id}.instruction`}
+                disableAutoPlay={true}
+                onReplay={() => {
+                  setReplayCount(r => r + 1);
+                  if (!isAudioMuted) {
+                    playSpeech(
+                      mission.dialogue?.instruction?.text || mission.instructionThai, 
+                      'th-TH', 1.0, 
+                      mission.dialogue?.instruction?.audioId || `${mission.id}.instruction`
+                    );
+                  }
+                }} 
               />
             </div>
           )}
