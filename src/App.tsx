@@ -128,14 +128,14 @@ function App() {
             const firstCorrectAudioId = activeMission.dialogue?.first_correct?.audioId || 'mission_A4.first_correct';
 
             if (isComplete) {
-              setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: correctText, audioId: correctAudioId });
+              setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: correctText, timestamp: Date.now(), audioId: correctAudioId });
               setTimeout(() => {
                 setEnglishItemIndex(0);
                 setEnglishPhase('listen1');
                 setGameState('english_interaction');
               }, 2500);
             } else {
-              setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: firstCorrectText, audioId: firstCorrectAudioId });
+              setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: firstCorrectText, timestamp: Date.now(), audioId: firstCorrectAudioId });
             }
           }, 800);
         } else {
@@ -146,14 +146,14 @@ function App() {
           const firstCorrectAudioId = activeMission.dialogue?.first_correct?.audioId || 'mission_A4.first_correct';
 
           if (isComplete) {
-            setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: correctText, audioId: correctAudioId });
+            setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: correctText, timestamp: Date.now(), audioId: correctAudioId });
             setTimeout(() => {
               setEnglishItemIndex(0);
               setEnglishPhase('listen1');
               setGameState('english_interaction');
             }, 2500);
           } else {
-            setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: firstCorrectText, audioId: firstCorrectAudioId });
+            setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: firstCorrectText, timestamp: Date.now(), audioId: firstCorrectAudioId });
           }
         }
       } else {
@@ -287,7 +287,10 @@ function App() {
         const currentItem = basket[englishItemIndex];
         if (!currentItem) return;
         
-        const sequence = getPillowSequence(currentItem.englishName);
+        const isPickTwo = activeMission.layoutTemplate === 'pick-two';
+        const teachingText = isPickTwo ? currentItem.englishName : (activeMission.englishTeachingText || currentItem.englishName);
+        
+        const sequence = getPillowSequence(teachingText);
         playAudioSequence(sequence, (phaseId) => {
           setEnglishPhase(phaseId as any);
         });
@@ -723,14 +726,15 @@ function App() {
           activeMission.level === 'A' ? (
             <VocabularyTeaching 
               targetImage={isPickTwo && currentEnglishItem ? currentEnglishItem.image : targetProducts[0].image}
-              targetEnglishName={isPickTwo && currentEnglishItem ? currentEnglishItem.englishName : targetProducts[0].englishName}
+              targetEnglishName={isPickTwo && currentEnglishItem ? currentEnglishItem.englishName : (activeMission.englishTeachingText || targetProducts[0].englishName)}
               englishPhase={englishPhase || 'listen1'}
               isAudioMuted={isAudioMuted}
               onReplay={() => {
                 setReplayCount(r => r + 1);
                 if (!isAudioMuted) {
                   const currentItem = isPickTwo && currentEnglishItem ? currentEnglishItem : targetProducts[0];
-                  const sequence = getPillowSequence(currentItem.englishName);
+                  const teachingText = isPickTwo ? currentItem.englishName : (activeMission.englishTeachingText || currentItem.englishName);
+                  const sequence = getPillowSequence(teachingText);
                   playAudioSequence(sequence, (phaseId) => setEnglishPhase(phaseId as any));
                 }
               }}
