@@ -852,7 +852,7 @@ function App() {
 
               {isSessionMode && sessionIndex === levelASession.length - 1 ? (
                 <>
-                  <h2 className="text-3xl font-bold text-green-600 mb-8 drop-shadow-sm tracking-wide bg-white/80 px-6 py-2 rounded-full border-2 border-green-200 relative z-30 mt-4">ทำครบ 4 ภารกิจแล้ว!</h2>
+                  <h2 className="text-3xl font-bold text-green-600 mb-8 drop-shadow-sm tracking-wide bg-white/80 px-6 py-2 rounded-full border-2 border-green-200 relative z-30 mt-4">ทำครบ {levelASession.length} ภารกิจแล้ว!</h2>
                   <div className="w-full flex flex-col gap-3 relative z-30">
                     <button 
                       onClick={startSession}

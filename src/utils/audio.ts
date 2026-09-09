@@ -18,7 +18,7 @@ export const initBgm = () => {
   if (typeof window === 'undefined' || isMasterMuted || bgmAudioElement) return;
 
   bgmAudioElement = new Audio('/audio/bgm/supermarket-loop.mp3');
-  bgmAudioElement.crossOrigin = 'anonymous'; // Prevent CORS silence in some environments
+  // Removed crossOrigin = 'anonymous' to prevent CORS silence on same-origin
   bgmAudioElement.loop = true;
   
   try {
@@ -102,6 +102,7 @@ export const playSpeech = (text: string, lang: 'th-TH' | 'en-US' = 'th-TH', rate
       playMp3(mp3Path, text, lang, rate, false, true);
     } else {
       console.error(`[AudioError] audioId: ${audioId} does not exist in audioIdMap. TTS fallback: BLOCKED because explicit audioId was supplied.`);
+      restoreBgm();
     }
   } else {
     if (mp3Path) {
@@ -136,6 +137,9 @@ const playMp3 = (path: string, fallbackText: string, lang: 'th-TH' | 'en-US', ra
     globalAudioElement.onerror = () => {
       if (disableTTSFallback) {
         console.error(`[AudioError] MP3 failed to load/play: ${path}. TTS fallback: BLOCKED because explicit audioId was supplied.`);
+        if (!isPartOfSequence && currentSequenceId === mySequenceId) {
+          restoreBgm();
+        }
         resolve();
       } else {
         console.warn(`[PupLearn Audio] Local asset missing or failed: ${path} — using TTS fallback`);
