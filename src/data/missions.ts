@@ -333,3 +333,25 @@ export const mission07: Mission = {
     productsDB.apple
   ]
 };
+
+export const missionA5: Mission = {
+  id: 'mission_A5',
+  level: 'A',
+  instructionThai: 'ช่วย Bingo หาสบู่หน่อย!',
+  dialogue: {
+    instruction: { text: 'ช่วย Bingo หาสบู่หน่อย!', audioId: 'mission_A5.instruction' },
+    correct: { text: 'ใช่แล้ว! สบู่!', audioId: 'mission_A5.correct' }
+  },
+  requiredCategories: [],
+  targetIds: ['soap'],
+  targetCount: 1,
+  layoutTemplate: 'find-one',
+  englishTeachingText: 'Soap',
+  vocabularyConfigs: [{ text: 'Soap', audioId: 'vocab.soap' }],
+  choices: [
+    { productId: 'soap' },
+    { productId: 'apple', wrongAudioId: 'mission_A5.wrong_apple', wrongFeedback: { text: 'นี่คือแอปเปิล... ลองหาสบู่อีกทีนะ!', audioId: 'mission_A5.wrong_apple' } },
+    { productId: 'banana', wrongAudioId: 'mission_A5.wrong_banana', wrongFeedback: { text: 'นี่คือกล้วย... ลองหาสบู่อีกทีนะ!', audioId: 'mission_A5.wrong_banana' } },
+    { productId: 'toothbrushA', wrongAudioId: 'mission_A5.wrong_toothbrush', wrongFeedback: { text: 'นี่คือแปรงสีฟัน... ลองหาสบู่อีกทีนะ!', audioId: 'mission_A5.wrong_toothbrush' } }
+  ]
+};
