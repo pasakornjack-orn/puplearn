@@ -31,6 +31,13 @@ export const audioAssets = {
   a4WrongToothbrush: '/audio/a4/bingo/wrong-toothbrush.mp3',
   a4FirstCorrect: '/audio/a4/bingo/first-correct.mp3',
   a4Complete: '/audio/a4/bingo/complete.mp3',
+
+  a5Instruction: '/audio/a5/bingo/instruction.mp3',
+  a5WrongApple: '/audio/a5/bingo/wrong_apple.mp3',
+  a5WrongBanana: '/audio/a5/bingo/wrong_banana.mp3',
+  a5WrongToothbrush: '/audio/a5/bingo/wrong_toothbrush.mp3',
+  a5Correct: '/audio/a5/bingo/correct.mp3',
+  vocabSoap: '/audio/vocabulary/Soap.mp3',
 };
 
 // Primary mapping from audioId to MP3 path – source of truth for production audio
@@ -60,10 +67,17 @@ export const audioIdMap: Record<string, string> = {
   'mission_A4.wrong_toothbrush': audioAssets.a4WrongToothbrush,
   'mission_A4.first_correct': audioAssets.a4FirstCorrect,
   'mission_A4.complete': audioAssets.a4Complete,
+  // Mission A5
+  'mission_A5.instruction': audioAssets.a5Instruction,
+  'mission_A5.wrong_apple': audioAssets.a5WrongApple,
+  'mission_A5.wrong_banana': audioAssets.a5WrongBanana,
+  'mission_A5.wrong_toothbrush': audioAssets.a5WrongToothbrush,
+  'mission_A5.correct': audioAssets.a5Correct,
   // Vocabulary (Pillow)
   'vocab.apple': audioAssets.vocabApple,
   'vocab.banana': audioAssets.vocabBanana,
   'vocab.red': audioAssets.vocabRed,
+  'vocab.soap': audioAssets.vocabSoap,
   // Pillow prompt assets
   'pillow.listen': audioAssets.pillowListen,
   'pillow.repeat': audioAssets.pillowRepeat,
@@ -175,6 +189,7 @@ export const getPillowSequence = (itemName: string, englishTextOverride?: string
   if (nameLower === 'apple') wordAudioPath = audioAssets.vocabApple;
   else if (nameLower === 'banana') wordAudioPath = audioAssets.vocabBanana;
   else if (nameLower === 'red') wordAudioPath = audioAssets.vocabRed;
+  else if (nameLower === 'soap') wordAudioPath = audioAssets.vocabSoap;
   else if (nameLower.includes('apple')) wordAudioPath = audioAssets.vocabApple;
   else if (nameLower.includes('banana')) wordAudioPath = audioAssets.vocabBanana;
   else wordAudioPath = `/audio/vocabulary/${nameLower}.mp3`;
