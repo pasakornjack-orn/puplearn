@@ -182,19 +182,16 @@ export const audioFallbackMap: Record<string, string> = {
   [audioAssets.vocabRed]: 'Red',
 };
 
-export const getPillowSequence = (itemName: string, englishTextOverride?: string) => {
-  const nameLower = itemName.toLowerCase();
-  let wordAudioPath = audioAssets.vocabApple; // default fallback
+export const getPillowSequence = (vocabConfig: { text: string; audioId?: string }, englishTextOverride?: string) => {
+  let wordAudioPath = '';
+  if (vocabConfig.audioId && audioIdMap[vocabConfig.audioId]) {
+    wordAudioPath = audioIdMap[vocabConfig.audioId];
+  } else {
+    // Legacy fallback for missions not supplying audioId
+    wordAudioPath = `/audio/vocabulary/${vocabConfig.text.toLowerCase()}.mp3`;
+  }
 
-  if (nameLower === 'apple') wordAudioPath = audioAssets.vocabApple;
-  else if (nameLower === 'banana') wordAudioPath = audioAssets.vocabBanana;
-  else if (nameLower === 'red') wordAudioPath = audioAssets.vocabRed;
-  else if (nameLower === 'soap') wordAudioPath = audioAssets.vocabSoap;
-  else if (nameLower.includes('apple')) wordAudioPath = audioAssets.vocabApple;
-  else if (nameLower.includes('banana')) wordAudioPath = audioAssets.vocabBanana;
-  else wordAudioPath = `/audio/vocabulary/${nameLower}.mp3`;
-
-  const fallbackText = englishTextOverride || itemName;
+  const fallbackText = englishTextOverride || vocabConfig.text;
 
   return [
     { phaseId: 'listen1', audioPath: audioAssets.pillowListen, fallbackText: 'ฟังนะ...', pauseAfterMs: 400 },

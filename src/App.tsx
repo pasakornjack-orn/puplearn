@@ -1,16 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import type { Mission, Product } from './data/missions';
 import { 
-  mission00, 
-  missionA2, 
-  missionA3, 
-  missionA4,
-  missionA5,
   mission07, 
-  productsDB,
   getMissionProducts,
+  productsDB,
   type MissionChoice 
 } from './data/missions';
+import { levelARegistry } from './data/levelARegistry';
 import ProductDisplayV2 from './components/ProductDisplayV2';
 import VocabularyTeaching from './components/VocabularyTeaching';
 import { MascotBubble } from './components/MascotBubble';
@@ -20,10 +16,11 @@ import { Basket } from './components/Basket';
 import type { MascotType, MascotEmotion } from './config/mascots';
 import { getMascotAsset } from './config/mascots';
 import { stopSpeech, playSpeech, setMasterVolume, playAudioSequence, initBgm } from './utils/audio';
-import { audioIdMap } from './config/audio/manifest';
-import { getPillowSequence } from './config/audio/manifest';
+import { getPillowSequence, audioIdMap } from './config/audio/manifest';
 
 type GameState = 'home' | 'mission_select' | 'intro' | 'shopping' | 'english_interaction' | 'completed';
+
+const levelASession = levelARegistry.map(r => r.mission);
 
 function App() {
   const [gameState, setGameState] = useState<GameState>('home');
@@ -43,7 +40,7 @@ function App() {
   useEffect(() => {
     const checkProgress = () => {
       const completed: Record<string, boolean> = {};
-      [mission00, missionA2, missionA3, missionA4, missionA5, mission07].forEach(m => {
+      [...levelASession, mission07].forEach(m => {
         try {
           const data = localStorage.getItem(`puplearn_${m.id}_progress`);
           if (data && JSON.parse(data).status === 'completed') {
@@ -63,7 +60,6 @@ function App() {
   const [wrongTaps, setWrongTaps] = useState(0);
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [expandedGroup, setExpandedGroup] = useState<string | null>('level-a');
-  const levelASession = [mission00, missionA2, missionA3, missionA4, missionA5];
 
   const hasPlayedSuccessRef = useRef(false);
 
@@ -142,14 +138,15 @@ function App() {
           setTimeout(() => {
             setBasket(newBasket);
             setFlyingItem(null);
-            const correctText = activeMission.id === 'mission_A4' ? (activeMission.dialogue?.complete?.text || 'เก่งมาก!') : (activeMission.dialogue?.correct?.text || 'เก่งมาก!');
-            const correctAudioId = activeMission.id === 'mission_A4' ? (activeMission.dialogue?.complete?.audioId || 'mission_A4.complete') : (activeMission.dialogue?.correct?.audioId || `${activeMission.id}.correct`);
+            const isPickTwoLayout = activeMission.layoutTemplate === 'pick-two';
+            const correctText = activeMission.dialogue?.complete?.text || activeMission.dialogue?.correct?.text || 'เก่งมาก!';
+            const correctAudioId = activeMission.dialogue?.complete?.audioId || activeMission.dialogue?.correct?.audioId || `${activeMission.id}.correct`;
             const firstCorrectText = activeMission.dialogue?.first_correct?.text || 'เยี่ยมเลย! หาอีกชิ้นนึงนะ';
-            const firstCorrectAudioId = activeMission.dialogue?.first_correct?.audioId || 'mission_A4.first_correct';
+            const firstCorrectAudioId = activeMission.dialogue?.first_correct?.audioId || `${activeMission.id}.first_correct`;
 
             if (isComplete) {
               setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: correctText, timestamp: Date.now(), audioId: correctAudioId });
-              const delayToEnglish = activeMission.id === 'mission_A4' ? 4500 : 2500;
+              const delayToEnglish = isPickTwoLayout ? 4500 : 2500;
               setTimeout(() => {
                 setEnglishItemIndex(0);
                 setEnglishPhase('listen1');
@@ -161,14 +158,15 @@ function App() {
           }, 800);
         } else {
           setBasket(newBasket);
-          const correctText = activeMission.id === 'mission_A4' ? (activeMission.dialogue?.complete?.text || 'เก่งมาก!') : (activeMission.dialogue?.correct?.text || 'เก่งมาก!');
-          const correctAudioId = activeMission.id === 'mission_A4' ? (activeMission.dialogue?.complete?.audioId || 'mission_A4.complete') : (activeMission.dialogue?.correct?.audioId || `${activeMission.id}.correct`);
+          const isPickTwoLayout = activeMission.layoutTemplate === 'pick-two';
+          const correctText = activeMission.dialogue?.complete?.text || activeMission.dialogue?.correct?.text || 'เก่งมาก!';
+          const correctAudioId = activeMission.dialogue?.complete?.audioId || activeMission.dialogue?.correct?.audioId || `${activeMission.id}.correct`;
           const firstCorrectText = activeMission.dialogue?.first_correct?.text || 'เยี่ยมเลย! หาอีกชิ้นนึงนะ';
-          const firstCorrectAudioId = activeMission.dialogue?.first_correct?.audioId || 'mission_A4.first_correct';
+          const firstCorrectAudioId = activeMission.dialogue?.first_correct?.audioId || `${activeMission.id}.first_correct`;
 
           if (isComplete) {
             setHintMessage({ mascot: 'Bingo', emotion: 'happy', text: correctText, timestamp: Date.now(), audioId: correctAudioId });
-            const delayToEnglish = activeMission.id === 'mission_A4' ? 4500 : 2500;
+            const delayToEnglish = isPickTwoLayout ? 4500 : 2500;
             setTimeout(() => {
               setEnglishItemIndex(0);
               setEnglishPhase('listen1');
@@ -312,7 +310,7 @@ function App() {
         const isPickTwo = activeMission.layoutTemplate === 'pick-two';
         const teachingText = isPickTwo ? currentItem.englishName : (activeMission.englishTeachingText || currentItem.englishName);
         
-        const sequence = getPillowSequence(teachingText);
+        const sequence = getPillowSequence({ text: teachingText });
         playAudioSequence(sequence, (phaseId) => {
           setEnglishPhase(phaseId as any);
         });
@@ -535,15 +533,11 @@ function App() {
                       ▶ เล่นต่อเนื่องทั้งหมด
                     </button>
                     
-                    {[
-                      { m: mission00, img: productsDB.apple.image },
-                      { m: missionA2, img: productsDB.banana.image },
-                      { m: missionA3, img: productsDB.redCar.image },
-                      { m: missionA4, img: productsDB.apple.image },
-                      { m: missionA5, img: productsDB.soap.image }
-                    ].map(({ m, img }, idx, arr) => {
+                    {levelARegistry.map((entry, idx, arr) => {
+                      const m = entry.mission;
+                      const img = entry.cardImage;
                       const isCompleted = completedMissions[m.id] === true;
-                      const prevCompleted = idx === 0 || completedMissions[arr[idx-1].m.id] === true;
+                      const prevCompleted = idx === 0 || completedMissions[arr[idx-1].mission.id] === true;
                       const isCurrent = !isCompleted && prevCompleted;
                       const isLocked = !isCompleted && !prevCompleted;
                       
@@ -619,7 +613,7 @@ function App() {
         
 
         {/* MISSION 00 ENGINE SHELL */}
-        {(gameState === 'shopping' || gameState === 'english_interaction') && ['mission_00', 'mission_A2', 'mission_A3', 'mission_A4', 'mission_A5'].includes(activeMission.id) && (
+        {(gameState === 'shopping' || gameState === 'english_interaction') && levelASession.some(m => m.id === activeMission.id) && (
           <div className="absolute inset-0 flex flex-col z-10 animate-fade-in">
             <MissionEngine 
               mission={activeMission} 
@@ -648,7 +642,7 @@ function App() {
         )}
 
         {/* STATE: SHOPPING */}
-        {gameState === 'shopping' && !['mission_00', 'mission_A2', 'mission_A3', 'mission_A4', 'mission_A5'].includes(activeMission.id) && (
+        {gameState === 'shopping' && !levelASession.some(m => m.id === activeMission.id) && (
           ['find-one', 'color-hunt', 'pick-two'].includes(activeMission.layoutTemplate || '') ? (
             <div className="absolute inset-0 flex flex-col z-10 animate-fade-in">
               <ProductDisplayV2 
@@ -774,7 +768,7 @@ function App() {
         )}
 
         {/* STATE: ENGLISH INTERACTION */}
-        {gameState === 'english_interaction' && !['mission_00', 'mission_A2', 'mission_A3', 'mission_A4', 'mission_A5'].includes(activeMission.id) && (
+        {gameState === 'english_interaction' && !levelASession.some(m => m.id === activeMission.id) && (
           activeMission.level === 'A' ? (
             <VocabularyTeaching 
               targetImage={isPickTwo && currentEnglishItem ? currentEnglishItem.image : targetProducts[0].image}
@@ -786,7 +780,7 @@ function App() {
                 if (!isAudioMuted) {
                   const currentItem = isPickTwo && currentEnglishItem ? currentEnglishItem : targetProducts[0];
                   const teachingText = isPickTwo ? currentItem.englishName : (activeMission.englishTeachingText || currentItem.englishName);
-                  const sequence = getPillowSequence(teachingText);
+                  const sequence = getPillowSequence({ text: teachingText });
                   playAudioSequence(sequence, (phaseId) => setEnglishPhase(phaseId as any));
                 }
               }}

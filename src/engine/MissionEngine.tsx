@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Mission, Product } from '../data/missions';
 import { productsDB } from '../data/missions';
 import ProductDisplayV2 from '../components/ProductDisplayV2';
@@ -73,10 +73,10 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
   useEffect(() => {
     if (phase === 'english_interaction') {
       if (!isAudioMuted) {
+        stopSpeech();
         const currentItem = basket[englishItemIndex];
-        const vocabConfig = mission.vocabularyConfigs?.find(v => v.productId === currentItem?.id) || mission.vocabularyConfigs?.[0];
-        const teachingText = vocabConfig?.text || '';
-        const sequence = getPillowSequence(teachingText);
+        const vocabConfig = mission.vocabularyConfigs?.find(v => v.productId === currentItem?.id) || mission.vocabularyConfigs?.[0] || { text: 'Word' };
+        const sequence = getPillowSequence(vocabConfig);
         playAudioSequence(sequence, (phaseId) => {
           setEnglishPhase(phaseId as any);
         });
@@ -230,9 +230,8 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
           onReplay={() => {
             setReplayCount(r => r + 1);
             if (!isAudioMuted) {
-              const vocabConfig = mission.vocabularyConfigs?.find(v => v.productId === basket[englishItemIndex]?.id) || mission.vocabularyConfigs?.[0];
-              const teachingText = vocabConfig?.text || '';
-              const sequence = getPillowSequence(teachingText);
+              const vocabConfig = mission.vocabularyConfigs?.find(v => v.productId === basket[englishItemIndex]?.id) || mission.vocabularyConfigs?.[0] || { text: 'Word' };
+              const sequence = getPillowSequence(vocabConfig);
               playAudioSequence(sequence, (phaseId) => setEnglishPhase(phaseId as any));
             }
           }}
