@@ -101,11 +101,29 @@ for (const entry of levelARegistry) {
     reportError(`[${mission.id}] Missing layoutTemplate`);
   }
 
+  // Extract available choice IDs for cross-referencing
+  const availableChoices = new Set<string>();
+  if (mission.choices) {
+    for (const choice of mission.choices) {
+      availableChoices.add(choice.productId);
+    }
+  }
+
   // Check target configuration
   if (mission.targetIds) {
+    const uniqueTargets = new Set<string>();
     for (const targetId of mission.targetIds) {
+      if (uniqueTargets.has(targetId)) {
+        reportError(`[${mission.id}] [DUPLICATE_TARGET] Duplicate targetId: ${targetId}`);
+      }
+      uniqueTargets.add(targetId);
+
       if (!productsDB[targetId]) {
         reportError(`[${mission.id}] targetId not found in productsDB: ${targetId}`);
+      }
+
+      if (mission.choices && !availableChoices.has(targetId)) {
+        reportError(`[${mission.id}] [TARGET_NOT_IN_CHOICES] targetId '${targetId}' is not present in the choices array`);
       }
     }
     
@@ -113,8 +131,8 @@ for (const entry of levelARegistry) {
       if (mission.targetCount <= 0) {
         reportError(`[${mission.id}] Invalid targetCount: ${mission.targetCount}`);
       }
-      if (mission.targetCount > mission.targetIds.length) {
-        reportError(`[${mission.id}] targetCount (${mission.targetCount}) cannot exceed number of targetIds (${mission.targetIds.length})`);
+      if (mission.targetCount > uniqueTargets.size) {
+        reportError(`[${mission.id}] [INVALID_TARGET_COUNT] targetCount (${mission.targetCount}) cannot exceed number of UNIQUE targetIds (${uniqueTargets.size})`);
       }
     }
   }
