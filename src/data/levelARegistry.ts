@@ -1,4 +1,4 @@
-import { mission00, missionA2, missionA3, missionA4, missionA5 } from './missions';
+import { mission00, missionA2, missionA3, missionA4, missionA5, missionA6 } from './missions';
 import { productsDB } from './missions';
 import type { Mission } from './missions';
 
@@ -21,6 +21,11 @@ export const levelAMissionCatalog: CatalogEntry[] = [
   { mission: missionA3, cardImage: productsDB.redCar.image, status: 'validated' },
   { mission: missionA4, cardImage: productsDB.apple.image, status: 'validated' },
   { mission: missionA5, cardImage: productsDB.soap.image, status: 'validated' }
+  , {
+    mission: missionA6,
+    cardImage: productsDB.toothbrushA.image,
+    status: 'audio_pending'
+  }
 ];
 
 export const levelARegistry = levelAMissionCatalog.filter(

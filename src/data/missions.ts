@@ -315,6 +315,28 @@ export const missionA4: Mission = {
   ]
 };
 
+export const missionA6: Mission = {
+  id: 'mission_A6',
+  level: 'A',
+  instructionThai: 'ช่วย Bingo หาแปรงสีฟันหน่อย!',
+  dialogue: {
+    instruction: { text: 'ช่วย Bingo หาแปรงสีฟันหน่อย!', audioId: 'mission_A6.instruction' },
+    correct: { text: 'ใช่แล้ว! แปรงสีฟัน!', audioId: 'mission_A6.correct' }
+  },
+  requiredCategories: [],
+  targetIds: ['toothbrushA'],
+  targetCount: 1,
+  layoutTemplate: 'find-one',
+  englishTeachingText: 'Toothbrush',
+  vocabularyConfigs: [{ text: 'Toothbrush', audioId: 'vocab.toothbrush', productId: 'toothbrushA' }],
+  choices: [
+    { productId: 'toothbrushA' },
+    { productId: 'soap', wrongAudioId: 'mission_A6.wrong_soap', wrongFeedback: { text: 'นี่คือสบู่... ลองหาแปรงสีฟันอีกทีนะ!', audioId: 'mission_A6.wrong_soap' } },
+    { productId: 'apple', wrongAudioId: 'mission_A6.wrong_apple', wrongFeedback: { text: 'นี่คือแอปเปิล... ลองหาแปรงสีฟันอีกทีนะ!', audioId: 'mission_A6.wrong_apple' } },
+    { productId: 'banana', wrongAudioId: 'mission_A6.wrong_banana', wrongFeedback: { text: 'นี่คือกล้วย... ลองหาแปรงสีฟันอีกทีนะ!', audioId: 'mission_A6.wrong_banana' } }
+  ]
+};
+
 export const mission07: Mission = {
   id: 'mission_07',
   level: 'D',
