@@ -7,6 +7,7 @@ import {
   type MissionChoice 
 } from './data/missions';
 import { levelARegistry } from './data/levelARegistry';
+import { gameRegistry } from './data/gameRegistry';
 import ProductDisplayV2 from './components/ProductDisplayV2';
 import VocabularyTeaching from './components/VocabularyTeaching';
 import { MascotBubble } from './components/MascotBubble';
@@ -20,7 +21,18 @@ import { getPillowSequence, audioIdMap } from './config/audio/manifest';
 
 type GameState = 'home' | 'mission_select' | 'intro' | 'shopping' | 'english_interaction' | 'completed';
 
-const levelASession = levelARegistry.map(r => r.mission);
+const ACTIVE_GAME_ID = 'game_supermarket';
+const activeGame = gameRegistry.find(g => g.id === ACTIVE_GAME_ID)!;
+
+const gameMissionsResolved = activeGame.missionIds
+  .map(id => {
+    const entry = levelARegistry.find(r => r.mission.id === id);
+    if (!entry) console.warn(`Mission ${id} configured in ${activeGame.id} but not found in enabled levelARegistry.`);
+    return entry;
+  })
+  .filter((entry): entry is typeof levelARegistry[0] => entry !== undefined);
+
+const levelASession = gameMissionsResolved.map(r => r.mission);
 
 function App() {
   const [gameState, setGameState] = useState<GameState>('home');
@@ -533,7 +545,7 @@ function App() {
                       ▶ เล่นต่อเนื่องทั้งหมด
                     </button>
                     
-                    {levelARegistry.map((entry, idx, arr) => {
+                    {gameMissionsResolved.map((entry, idx, arr) => {
                       const m = entry.mission;
                       const img = entry.cardImage;
                       const isCompleted = completedMissions[m.id] === true;
