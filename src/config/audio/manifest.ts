@@ -38,6 +38,12 @@ export const audioAssets = {
   a5WrongToothbrush: '/audio/a5/bingo/wrong_toothbrush.mp3',
   a5Correct: '/audio/a5/bingo/correct.mp3',
   vocabSoap: '/audio/vocabulary/Soap.mp3',
+  vocabToothbrush: '/audio/vocabulary/toothbrush.mp3',
+  a6Instruction: '/audio/a6/bingo/instruction.mp3',
+  a6Correct: '/audio/a6/bingo/correct.mp3',
+  a6WrongSoap: '/audio/a6/bingo/wrong_soap.mp3',
+  a6WrongApple: '/audio/a6/bingo/wrong_apple.mp3',
+  a6WrongBanana: '/audio/a6/bingo/wrong_banana.mp3',
 };
 
 // Primary mapping from audioId to MP3 path – source of truth for production audio
@@ -73,11 +79,18 @@ export const audioIdMap: Record<string, string> = {
   'mission_A5.wrong_banana': audioAssets.a5WrongBanana,
   'mission_A5.wrong_toothbrush': audioAssets.a5WrongToothbrush,
   'mission_A5.correct': audioAssets.a5Correct,
+  // Mission A6
+  'mission_A6.instruction': audioAssets.a6Instruction,
+  'mission_A6.correct': audioAssets.a6Correct,
+  'mission_A6.wrong_soap': audioAssets.a6WrongSoap,
+  'mission_A6.wrong_apple': audioAssets.a6WrongApple,
+  'mission_A6.wrong_banana': audioAssets.a6WrongBanana,
   // Vocabulary (Pillow)
   'vocab.apple': audioAssets.vocabApple,
   'vocab.banana': audioAssets.vocabBanana,
   'vocab.red': audioAssets.vocabRed,
   'vocab.soap': audioAssets.vocabSoap,
+  'vocab.toothbrush': audioAssets.vocabToothbrush,
   // Pillow prompt assets
   'pillow.listen': audioAssets.pillowListen,
   'pillow.repeat': audioAssets.pillowRepeat,
