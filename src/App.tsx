@@ -8,6 +8,7 @@ import {
 } from './data/missions';
 import { levelARegistry } from './data/levelARegistry';
 import { gameRegistry } from './data/gameRegistry';
+import { getGameStatus, type AdventureState } from './utils/gameProgress';
 import ProductDisplayV2 from './components/ProductDisplayV2';
 import VocabularyTeaching from './components/VocabularyTeaching';
 import { MascotBubble } from './components/MascotBubble';
@@ -48,7 +49,7 @@ function App() {
   useEffect(() => {
     const checkProgress = () => {
       const completed: Record<string, boolean> = {};
-      [...levelASession, mission07].forEach(m => {
+      [...levelARegistry.map(r => r.mission), mission07].forEach(m => {
         try {
           const data = localStorage.getItem(`puplearn_${m.id}_progress`);
           if (data && JSON.parse(data).status === 'completed') {
@@ -354,7 +355,7 @@ function App() {
         localStorage.setItem(`puplearn_${activeMission.id}_progress`, JSON.stringify(progressData));
         
         if (isSessionMode && sessionIndex === levelASession.length - 1) {
-          localStorage.setItem('puplearn_level_A_session_completed', new Date().toISOString());
+          
         }
       }
     } else {
@@ -507,49 +508,69 @@ function App() {
 
             {/* Game Cards */}
             <div className="flex-1 overflow-y-auto px-6 pb-12 pt-4 flex flex-col gap-6 relative z-10">
-              {gameRegistry.map((game) => {
-                const isAvailable = game.missionIds && game.missionIds.length > 0;
-                
-                return (
-                  <button
-                    key={game.id}
-                    disabled={!isAvailable}
-                    onClick={() => {
-                      if (isAvailable) {
-                        setActiveGameId(game.id);
-                        setGameState('mission_select');
-                      }
-                    }}
-                    className={`w-full relative rounded-[3rem] p-4 transition-all flex flex-col items-center border-[6px] ${
-                      isAvailable 
-                        ? 'bg-white border-sky-300 shadow-[0_15px_30px_rgba(2,132,199,0.15)] active:translate-y-2 active:shadow-none hover:scale-[1.02]' 
-                        : 'bg-gray-100 border-gray-200 opacity-90 cursor-not-allowed'
-                    }`}
-                  >
-                    <div className={`w-full aspect-[2/1] rounded-[2rem] overflow-hidden relative mb-4 ${isAvailable ? 'bg-sky-100' : 'bg-gray-200 grayscale'}`}>
-                      {game.coverImage && (
-                        <img src={game.coverImage} alt={game.title} className="w-full h-full object-cover" />
-                      )}
-                      
-                      {/* Mascot Decoration */}
-                      {isAvailable && game.mascot === 'Bingo' && (
-                        <img src="/mascots/bingo-happy.png" alt="Bingo" className="absolute -bottom-2 -right-2 w-32 h-32 object-contain drop-shadow-md" />
-                      )}
+              {(() => {
+                let previousStatus: AdventureState | null = null;
+                return gameRegistry.map((game, index) => {
+                  const status = getGameStatus(game, index, completedMissions, previousStatus);
+                  previousStatus = status;
+                  
+                  const isPlayable = status === 'available' || status === 'completed';
+                  
+                  return (
+                    <button
+                      key={game.id}
+                      disabled={!isPlayable}
+                      onClick={() => {
+                        if (isPlayable) {
+                          setActiveGameId(game.id);
+                          setGameState('mission_select');
+                        }
+                      }}
+                      className={`w-full relative rounded-[3rem] p-4 transition-all flex flex-col items-center border-[6px] ${
+                        isPlayable 
+                          ? 'bg-white border-sky-300 shadow-[0_15px_30px_rgba(2,132,199,0.15)] active:translate-y-2 active:shadow-none hover:scale-[1.02]' 
+                          : 'bg-gray-100 border-gray-200 opacity-90 cursor-not-allowed'
+                      }`}
+                    >
+                      <div className={`w-full aspect-[2/1] rounded-[2rem] overflow-hidden relative mb-4 ${isPlayable ? 'bg-sky-100' : 'bg-gray-200 grayscale'}`}>
+                        {game.coverImage && (
+                          <img src={game.coverImage} alt={game.title} className="w-full h-full object-cover" />
+                        )}
+                        
+                        {/* Mascot Decoration */}
+                        {isPlayable && game.mascot === 'Bingo' && (
+                          <img src="/mascots/bingo-happy.png" alt="Bingo" className="absolute -bottom-2 -right-2 w-32 h-32 object-contain drop-shadow-md" />
+                        )}
 
-                      {!isAvailable && (
-                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                           <div className="bg-gray-800/80 text-white font-bold font-display px-6 py-3 rounded-full text-2xl tracking-wide backdrop-blur-sm border-2 border-gray-600/50 shadow-lg">
-                             Coming Soon
-                           </div>
-                        </div>
-                      )}
-                    </div>
-                    <h3 className={`text-3xl font-display font-bold ${isAvailable ? 'text-sky-600' : 'text-gray-500'} mb-2 text-center`}>
-                      {game.title}
-                    </h3>
-                  </button>
-                );
-              })}
+                        {status === 'coming_soon' && (
+                          <div className="absolute inset-0 bg-black/30 flex items-center justify-center z-20">
+                             <div className="bg-gray-800/80 text-white font-bold font-display px-6 py-3 rounded-full text-2xl tracking-wide backdrop-blur-sm border-2 border-gray-600/50 shadow-lg">
+                               Coming Soon
+                             </div>
+                          </div>
+                        )}
+
+                        {status === 'locked' && (
+                          <div className="absolute inset-0 bg-black/30 flex items-center justify-center z-20">
+                             <div className="bg-gray-800/80 text-white font-bold font-display px-6 py-3 rounded-full text-2xl tracking-wide backdrop-blur-sm border-2 border-gray-600/50 shadow-lg flex items-center gap-2">
+                               <span className="text-3xl">🔒</span> Locked
+                             </div>
+                          </div>
+                        )}
+
+                        {status === 'completed' && (
+                          <div className="absolute top-4 right-4 bg-green-500 text-white font-bold font-display px-4 py-2 rounded-full text-xl tracking-wide border-4 border-green-300 shadow-[0_4px_15px_rgba(34,197,94,0.3)] flex items-center gap-2 z-10 animate-bounce-twice">
+                            🌟 ทำครบแล้ว
+                          </div>
+                        )}
+                      </div>
+                      <h3 className={`text-3xl font-display font-bold ${isPlayable ? 'text-sky-600' : 'text-gray-500'} mb-2 text-center`}>
+                        {game.title}
+                      </h3>
+                    </button>
+                  );
+                });
+              })()}
             </div>
           </div>
         )}
@@ -576,7 +597,11 @@ function App() {
               </h2>
               <button
                 onClick={() => {
-                  localStorage.clear();
+                  Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('puplearn_')) {
+        localStorage.removeItem(key);
+      }
+    });
                   setCompletedMissions({});
                 }}
                 className="w-12 h-12 bg-white/50 backdrop-blur-sm rounded-full flex items-center justify-center text-rose-500 shadow-sm border-2 border-white active:translate-y-1 transition-all flex-shrink-0"
@@ -714,7 +739,7 @@ function App() {
                 localStorage.setItem(`puplearn_${activeMission.id}_progress`, JSON.stringify(progressData));
                 
                 if (isSessionMode && sessionIndex === levelASession.length - 1) {
-                  localStorage.setItem('puplearn_level_A_session_completed', new Date().toISOString());
+                  
                 }
               }}
             />
@@ -926,7 +951,7 @@ function App() {
 
               {isSessionMode && sessionIndex === levelASession.length - 1 ? (
                 <>
-                  <h2 className="text-3xl font-bold text-green-600 mb-8 drop-shadow-sm tracking-wide bg-white/80 px-6 py-2 rounded-full border-2 border-green-200 relative z-30 mt-4">ทำครบ {levelASession.length} ภารกิจแล้ว!</h2>
+                  <h2 className="text-3xl font-bold text-green-600 mb-8 drop-shadow-sm tracking-wide bg-white/80 px-6 py-2 rounded-full border-2 border-green-200 relative z-30 mt-4">ทำภารกิจในการผจญภัยนี้ครบแล้ว!</h2>
                   <div className="w-full flex flex-col gap-3 relative z-30">
                     <button 
                       onClick={startSession}
@@ -937,12 +962,12 @@ function App() {
                     <button 
                       onClick={() => {
                         setIsSessionMode(false);
-                        setGameState('mission_select');
+                        setGameState('game_select');
                       }}
                       className="w-full bg-white text-sky-500 font-bold text-xl py-3 rounded-[2rem] shadow-[0_6px_0_rgba(0,0,0,0.05)] active:translate-y-2 active:shadow-none hover:scale-[1.02] transition-all border-4 border-sky-100 flex items-center justify-center gap-2 mt-2"
                     >
                       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
-                      กลับหน้าเลือกด่าน
+                      กลับไปเลือกเกม
                     </button>
                   </div>
                 </>
