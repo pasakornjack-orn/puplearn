@@ -1,10 +1,26 @@
-﻿# Current Status
+# Current Status
+
+## Milestone: Mission Authoring Workflow V1
+- **Status:** COMPLETE
+- **checkpoint tag:** mission-authoring-v1
+- **next task:** Visual Motion System V1
+
+## Authoring Proof (Mission A6)
+- A6 completed end-to-end using the authoring workflow
+- A6 required no MissionEngine changes
+- A6 required no App.tsx changes
+- A6 required no audio.ts changes
+- lifecycle successfully proved:
+  `audio_pending` -> `ready_to_enable` -> `enabled` -> `validated`
+- `mission-check` proved draft/readiness workflow
+- `validate-missions` proved production gate
+- Level A currently contains 6 validated child-facing missions
+- MissionEngine V1 remains frozen
 
 ## Milestone: Mission Engine V1 Core
 - **Status:** COMPLETE
 - **baseline commit:** 586d1e4
 - **checkpoint tag:** mission-engine-v1-core
-- **next task:** Mission A5 proof mission
 
 ## Migration Details
 - Mission 00 migrated: find-one
