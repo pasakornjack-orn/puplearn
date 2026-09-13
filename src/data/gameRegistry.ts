@@ -12,6 +12,7 @@ export const gameRegistry: GameDefinition[] = [
   {
     id: 'game_supermarket',
     title: 'Supermarket Adventure',
+    coverImage: '/environments/supermarket-interior-bg.png',
     mascot: 'Bingo',
     missionIds: [
       'mission_00',
@@ -25,6 +26,7 @@ export const gameRegistry: GameDefinition[] = [
   {
     id: 'game_daily_life',
     title: "Bingo's Daily Life",
+    coverImage: '/environments/mission-select-bg.png',
     mascot: 'Bingo',
     missionIds: [] // Coming soon
   }

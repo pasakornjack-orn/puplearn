@@ -19,23 +19,19 @@ import { getMascotAsset } from './config/mascots';
 import { stopSpeech, playSpeech, setMasterVolume, playAudioSequence, initBgm } from './utils/audio';
 import { getPillowSequence, audioIdMap } from './config/audio/manifest';
 
-type GameState = 'home' | 'mission_select' | 'intro' | 'shopping' | 'english_interaction' | 'completed';
+type GameState = 'home' | 'game_select' | 'mission_select' | 'intro' | 'shopping' | 'english_interaction' | 'completed';
 
-const ACTIVE_GAME_ID = 'game_supermarket';
-const activeGame = gameRegistry.find(g => g.id === ACTIVE_GAME_ID)!;
 
-const gameMissionsResolved = activeGame.missionIds
-  .map(id => {
-    const entry = levelARegistry.find(r => r.mission.id === id);
-    if (!entry) console.warn(`Mission ${id} configured in ${activeGame.id} but not found in enabled levelARegistry.`);
-    return entry;
-  })
-  .filter((entry): entry is typeof levelARegistry[0] => entry !== undefined);
-
-const levelASession = gameMissionsResolved.map(r => r.mission);
 
 function App() {
   const [gameState, setGameState] = useState<GameState>('home');
+  const [activeGameId, setActiveGameId] = useState<string>('game_supermarket');
+
+  const activeGame = gameRegistry.find(g => g.id === activeGameId) || gameRegistry[0];
+  const gameMissionsResolved = activeGame.missionIds
+    .map(id => levelARegistry.find(r => r.mission.id === id))
+    .filter((entry): entry is typeof levelARegistry[0] => entry !== undefined);
+  const levelASession = gameMissionsResolved.map(r => r.mission);
   const [activeMission, setActiveMission] = useState<Mission>(mission07);
   const [basket, setBasket] = useState<Product[]>([]);
   const [hintMessage, setHintMessage] = useState<{ mascot: MascotType; emotion?: MascotEmotion; text: string; timestamp?: number; audioId?: string } | null>(null);
@@ -63,7 +59,7 @@ function App() {
       setCompletedMissions(completed);
     };
     checkProgress();
-  }, [gameState]); // Re-check when we return to home/mission_select
+  }, [gameState, levelASession]); // Re-check when we return to home/mission_select
 
   // Session Flow State
   const [isSessionMode, setIsSessionMode] = useState(false);
@@ -482,6 +478,78 @@ function App() {
                   <span className="text-2xl md:text-3xl leading-none">▶</span> เริ่มเล่น
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+                {/* STATE: GAME SELECT */}
+        {gameState === 'game_select' && (
+          <div className="absolute inset-0 flex flex-col z-20">
+            {/* Background */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+               <img src="/environments/mission-select-bg.png" alt="Game Select Background" className="w-full h-full object-cover object-top" />
+               <div className="absolute inset-0 bg-white/30 backdrop-blur-[2px]"></div>
+            </div>
+
+            {/* Header */}
+            <div className="px-6 py-4 flex items-center gap-4 relative z-10">
+              <button 
+                onClick={() => setGameState('home')}
+                className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-sky-500 shadow-[0_4px_0_rgba(0,0,0,0.05)] border-2 border-white active:translate-y-1 transition-all flex-shrink-0"
+              >
+                <span className="text-2xl leading-none -mt-1">⬅️</span>
+              </button>
+              <h2 className="text-3xl sm:text-4xl font-display font-bold text-white drop-shadow-md tracking-wide flex-1 text-center" style={{ WebkitTextStroke: '1px #0ea5e9' }}>
+                เลือกการผจญภัย
+              </h2>
+              <div className="w-12 h-12 flex-shrink-0"></div>
+            </div>
+
+            {/* Game Cards */}
+            <div className="flex-1 overflow-y-auto px-6 pb-12 pt-4 flex flex-col gap-6 relative z-10">
+              {gameRegistry.map((game) => {
+                const isAvailable = game.missionIds && game.missionIds.length > 0;
+                
+                return (
+                  <button
+                    key={game.id}
+                    disabled={!isAvailable}
+                    onClick={() => {
+                      if (isAvailable) {
+                        setActiveGameId(game.id);
+                        setGameState('mission_select');
+                      }
+                    }}
+                    className={`w-full relative rounded-[3rem] p-4 transition-all flex flex-col items-center border-[6px] ${
+                      isAvailable 
+                        ? 'bg-white border-sky-300 shadow-[0_15px_30px_rgba(2,132,199,0.15)] active:translate-y-2 active:shadow-none hover:scale-[1.02]' 
+                        : 'bg-gray-100 border-gray-200 opacity-90 cursor-not-allowed'
+                    }`}
+                  >
+                    <div className={`w-full aspect-[2/1] rounded-[2rem] overflow-hidden relative mb-4 ${isAvailable ? 'bg-sky-100' : 'bg-gray-200 grayscale'}`}>
+                      {game.coverImage && (
+                        <img src={game.coverImage} alt={game.title} className="w-full h-full object-cover" />
+                      )}
+                      
+                      {/* Mascot Decoration */}
+                      {isAvailable && game.mascot === 'Bingo' && (
+                        <img src="/mascots/bingo-happy.png" alt="Bingo" className="absolute -bottom-2 -right-2 w-32 h-32 object-contain drop-shadow-md" />
+                      )}
+
+                      {!isAvailable && (
+                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                           <div className="bg-gray-800/80 text-white font-bold font-display px-6 py-3 rounded-full text-2xl tracking-wide backdrop-blur-sm border-2 border-gray-600/50 shadow-lg">
+                             Coming Soon
+                           </div>
+                        </div>
+                      )}
+                    </div>
+                    <h3 className={`text-3xl font-display font-bold ${isAvailable ? 'text-sky-600' : 'text-gray-500'} mb-2 text-center`}>
+                      {game.title}
+                    </h3>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
