@@ -27,7 +27,7 @@ const ProductSlot: React.FC<{
       className="relative w-full aspect-square flex items-center justify-center pointer-events-auto transition-transform active:scale-95 group"
     >
       <img src="/ui/product-tray-v2.png" alt="Tray" className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-sm" />
-      <div className={`relative w-[65%] h-[65%] flex items-center justify-center -translate-y-3 transition-transform ${isBouncing ? 'animate-[bounce_0.8s_ease-in-out]' : 'group-hover:scale-105'}`}>
+      <div className={`relative w-[65%] h-[65%] flex items-center justify-center -translate-y-3 transition-transform ${isBouncing ? 'animate-friendly-wiggle' : 'group-hover:scale-105'}`}>
         <div className="absolute -bottom-2 w-[70%] h-4 bg-black/15 rounded-[100%] blur-[3px]"></div>
         <img src={product.image} alt={product.name} className="w-full h-full object-contain relative z-10 drop-shadow-sm origin-bottom pointer-events-none" />
       </div>

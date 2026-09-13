@@ -22,6 +22,14 @@ const VocabularyTeaching: React.FC<VocabularyTeachingProps> = ({
   const displayTargetText = targetEnglishName;
   const isPulsing = englishPhase === 'listen2' || englishPhase === 'repeat2';
 
+  const [talkTrigger, setTalkTrigger] = React.useState(0);
+  React.useEffect(() => {
+    if (englishPhase === 'listen1' || englishPhase === 'repeat1') {
+      setTalkTrigger(Date.now());
+    }
+  }, [englishPhase]);
+
+
   const message = 
     englishPhase === 'listen1' ? 'ฟังนะ...' : 
     englishPhase === 'listen2' ? displayTargetText : 
@@ -81,6 +89,7 @@ const VocabularyTeaching: React.FC<VocabularyTeachingProps> = ({
           audioEnabled={!isAudioMuted}
           audioId={currentAudioId}
           disableAutoPlay={true}
+          playTrigger={talkTrigger}
           audioLang={(englishPhase === 'listen2' || englishPhase === 'repeat2') ? 'en-US' : 'th-TH'} 
           audioRate={(englishPhase === 'listen2' || englishPhase === 'repeat2') ? 0.65 : 1.0}
           audioOverrideText={

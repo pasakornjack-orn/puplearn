@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { MascotType, MascotEmotion } from '../config/mascots';
 import { getMascotAsset } from '../config/mascots';
 import { playSpeech } from '../utils/audio';
@@ -46,6 +46,17 @@ export const MascotBubble = ({
 
   const imageSrc = getMascotAsset(mascot, currentEmotion as MascotEmotion);
 
+  const [isTalking, setIsTalking] = useState(false);
+  const [talkKey, setTalkKey] = useState(0);
+
+  useEffect(() => {
+    if (playTrigger) {
+      setIsTalking(true);
+      setTalkKey(prev => prev + 1);
+    }
+  }, [playTrigger]);
+
+
   useEffect(() => {
     if (disableAutoPlay) return;
     if (audioEnabled && (audioOverrideText || message)) {
@@ -78,7 +89,7 @@ export const MascotBubble = ({
     return (
       <div className="flex flex-col items-center w-full max-w-sm mx-auto relative mt-2 pointer-events-none">
         <div className="relative z-10 w-56 h-56 flex items-end justify-center -mb-4">
-          <img src={imageSrc} alt={mascot} className="w-full h-full object-contain object-bottom drop-shadow-2xl animate-breath" />
+          <img key={`${mascot}-${talkKey}`} onAnimationEnd={() => setIsTalking(false)} src={imageSrc} alt={mascot} className={`w-full h-full object-contain object-bottom drop-shadow-2xl ${isTalking ? 'animate-mascot-talk' : 'animate-breath'}`} />
         </div>
         <div className="w-full bg-white border-[6px] border-yellow-300 rounded-[3rem] p-6 pt-10 pb-6 shadow-[0_12px_20px_rgba(0,0,0,0.08)] text-center relative z-20 pointer-events-auto">
           {renderReplayButton("absolute top-6 right-6 w-12 h-12 text-2xl border-4 border-gray-100 hover:scale-105")}
@@ -105,7 +116,7 @@ export const MascotBubble = ({
         </div>
         {/* Mascot */}
         <div className="relative w-40 h-40 flex-shrink-0 z-20">
-          <img src={imageSrc} alt={mascot} className="absolute bottom-0 w-[140%] max-w-none object-contain object-bottom drop-shadow-lg animate-breath origin-bottom-left" />
+          <img key={`${mascot}-${talkKey}`} onAnimationEnd={() => setIsTalking(false)} src={imageSrc} alt={mascot} className={`absolute bottom-0 w-[140%] max-w-none object-contain object-bottom drop-shadow-lg ${isTalking ? 'animate-mascot-talk' : 'animate-breath'} origin-bottom-left`} />
         </div>
       </div>
     );
@@ -126,7 +137,7 @@ export const MascotBubble = ({
         </div>
         {/* Mascot: Anchored at the bottom left, slightly reduced */}
         <div className="absolute bottom-0 -left-2 sm:-left-4 z-0">
-          <img src={imageSrc} alt={mascot} className="w-[200px] sm:w-[260px] max-h-[25vh] max-w-none h-auto object-contain drop-shadow-xl origin-bottom-left animate-breath" />
+          <img key={`${mascot}-${talkKey}`} onAnimationEnd={() => setIsTalking(false)} src={imageSrc} alt={mascot} className={`w-[200px] sm:w-[260px] max-h-[25vh] max-w-none h-auto object-contain drop-shadow-xl origin-bottom-left ${isTalking ? 'animate-mascot-talk' : 'animate-breath'}`} />
         </div>
       </div>
     );
@@ -146,7 +157,7 @@ export const MascotBubble = ({
         </div>
         {/* Mascot on bottom */}
         <div className="relative w-48 sm:w-56 h-auto flex-shrink-0 z-10 min-h-[160px] flex items-end justify-center">
-          <img src={imageSrc} alt={mascot} className="w-full max-h-[22vh] max-w-none h-auto object-contain drop-shadow-xl origin-bottom animate-breath" />
+          <img key={`${mascot}-${talkKey}`} onAnimationEnd={() => setIsTalking(false)} src={imageSrc} alt={mascot} className={`w-full max-h-[22vh] max-w-none h-auto object-contain drop-shadow-xl origin-bottom ${isTalking ? 'animate-mascot-talk' : 'animate-breath'}`} />
         </div>
       </div>
     );
@@ -157,7 +168,7 @@ export const MascotBubble = ({
     return (
       <div className="flex items-end w-full max-w-md mx-auto pointer-events-none">
         <div className="relative w-32 sm:w-36 h-32 flex-shrink-0 z-20 -ml-2">
-          <img src={imageSrc} alt={mascot} className="absolute bottom-0 w-[140%] max-w-none object-contain object-bottom drop-shadow-lg animate-breath origin-bottom-left" />
+          <img key={`${mascot}-${talkKey}`} onAnimationEnd={() => setIsTalking(false)} src={imageSrc} alt={mascot} className={`absolute bottom-0 w-[140%] max-w-none object-contain object-bottom drop-shadow-lg ${isTalking ? 'animate-mascot-talk' : 'animate-breath'} origin-bottom-left`} />
         </div>
         <div className="flex-1 mb-2 ml-1 relative pointer-events-auto">
           <div className="bg-white border-[4px] border-yellow-300 rounded-[2rem] rounded-bl-xl p-3 sm:p-4 pr-12 shadow-md relative z-10">
@@ -176,7 +187,7 @@ export const MascotBubble = ({
     return (
       <div className="flex w-full max-w-md mx-auto items-end px-2 z-40 pointer-events-none mt-4">
         <div className="relative w-32 h-40 flex-shrink-0 z-20">
-          <img src={imageSrc} alt={mascot} className="absolute bottom-0 w-[130%] max-w-none object-contain object-bottom drop-shadow-lg animate-breath origin-bottom" />
+          <img key={`${mascot}-${talkKey}`} onAnimationEnd={() => setIsTalking(false)} src={imageSrc} alt={mascot} className={`absolute bottom-0 w-[130%] max-w-none object-contain object-bottom drop-shadow-lg ${isTalking ? 'animate-mascot-talk' : 'animate-breath'} origin-bottom`} />
         </div>
         <div className="flex-1 mb-6 ml-2 relative pointer-events-auto">
           <div className="bg-white border-[4px] border-yellow-300 rounded-[2rem] rounded-bl-lg p-4 pr-12 shadow-[0_10px_20px_rgba(0,0,0,0.08)] relative z-10">
