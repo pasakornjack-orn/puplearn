@@ -472,7 +472,7 @@ function App() {
                 <button 
                   onClick={() => {
                     initBgm();
-                    setGameState('mission_select');
+                    setGameState('game_select');
                   }}
                   className="w-full bg-yellow-400 text-yellow-900 font-bold text-3xl md:text-4xl py-6 rounded-[3rem] shadow-[0_8px_0_rgb(202,138,4),_0_20px_30px_rgba(0,0,0,0.2)] hover:scale-[1.02] active:scale-[0.98] active:translate-y-2 active:shadow-[0_0_0_rgb(202,138,4)] transition-all border-[6px] border-yellow-300 tracking-wide flex justify-center items-center gap-2 animate-pulse-occasional"
                 >
@@ -587,13 +587,13 @@ function App() {
             {/* Header */}
             <div className="px-6 py-4 flex items-center gap-4 relative z-10">
               <button 
-                onClick={() => setGameState('home')}
+                onClick={() => setGameState('game_select')}
                 className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-sky-500 shadow-[0_4px_0_rgba(0,0,0,0.05)] border-2 border-white active:translate-y-1 transition-all flex-shrink-0"
               >
                 <span className="text-2xl leading-none -mt-1">⬅️</span>
               </button>
               <h2 className="text-3xl sm:text-4xl font-display font-bold text-white drop-shadow-md tracking-wide flex-1 text-center" style={{ WebkitTextStroke: '1px #0ea5e9' }}>
-                เลือกภารกิจ
+                {activeGame?.title || 'เลือกภารกิจ'}
               </h2>
               <button
                 onClick={() => {
@@ -625,7 +625,7 @@ function App() {
                   </div>
                   <div className="flex-1 text-left px-4">
                     <div className="text-xl font-bold text-white drop-shadow-sm">บทเรียนระดับ A</div>
-                    <div className="text-sm font-semibold text-sky-100">พื้นฐาน (4 ภารกิจ)</div>
+                    <div className="text-sm font-semibold text-sky-100">พื้นฐาน ({gameMissionsResolved.length} ภารกิจ)</div>
                   </div>
                   <div className="text-white text-2xl mr-2 font-bold">
                     {expandedGroup === 'level-a' ? '▲' : '▼'}
@@ -676,42 +676,6 @@ function App() {
                 )}
               </div>
 
-              {/* Advanced Group */}
-              <div className="w-full bg-white/70 backdrop-blur-md rounded-[2.5rem] p-2 border-2 border-white shadow-sm mt-1">
-                <button 
-                  onClick={() => setExpandedGroup(expandedGroup === 'advanced' ? null : 'advanced')}
-                  className="w-full bg-gradient-to-r from-orange-400 to-rose-400 rounded-[2rem] p-3 shadow-[0_8px_20px_rgba(249,115,22,0.2)] active:scale-[0.98] transition-all flex items-center justify-between"
-                >
-                  <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center p-2 backdrop-blur-sm">
-                    <img src="/ui/basket-v2.png" alt="Basket" className="w-full h-full object-contain" />
-                  </div>
-                  <div className="flex-1 text-left px-4">
-                    <div className="text-xl font-bold text-white drop-shadow-sm">ภารกิจพิเศษ</div>
-                    <div className="text-sm font-semibold text-orange-100">ช้อปปิ้งอิสระ</div>
-                  </div>
-                  <div className="text-white text-2xl mr-2 font-bold">
-                    {expandedGroup === 'advanced' ? '▲' : '▼'}
-                  </div>
-                </button>
-
-                {expandedGroup === 'advanced' && (
-                  <div className="flex flex-col gap-2 mt-3 px-2 pb-2 animate-fade-in-up">
-                    <button 
-                      onClick={() => startMission(mission07)}
-                      className={`w-full bg-white rounded-[1.5rem] p-3 shadow-[0_4px_10px_rgba(0,0,0,0.03)] active:translate-y-1 active:shadow-none transition-all flex items-center gap-3 border-2 ${completedMissions[mission07.id] ? 'border-green-300' : 'border-transparent hover:border-orange-100'}`}
-                    >
-                      <div className={`w-12 h-12 rounded-xl p-2 flex-shrink-0 relative ${completedMissions[mission07.id] ? 'bg-green-50' : 'bg-orange-50'}`}>
-                        <img src="/ui/basket-v2.png" alt="Basket" className="w-full h-full object-contain drop-shadow-sm" />
-                        {completedMissions[mission07.id] && <div className="absolute -top-1 -right-1 bg-green-500 rounded-full w-5 h-5 flex items-center justify-center text-white text-xs border border-white">✓</div>}
-                      </div>
-                      <div className="flex-1 text-left">
-                        <div className="text-lg font-bold text-gray-800 font-display">อิสระ (ด่าน 07)</div>
-                        <div className="text-xs font-semibold text-gray-500">{mission07.instructionThai}</div>
-                      </div>
-                    </button>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         )}
