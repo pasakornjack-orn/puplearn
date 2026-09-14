@@ -43,13 +43,13 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
       setHintMessage({
         mascot: mission.guideMascot || 'Bingo',
         emotion: 'happy',
-        text: 'เก่งมาก!',
+        text: mission.dialogue?.correct?.text || 'ใช่แล้ว!',
         audioId: `${mission.id}.correct`,
         timestamp: Date.now()
       });
       if (!isAudioMuted) {
         stopSpeech();
-        playSpeech('เก่งมาก!', 'th-TH', 1.0, `${mission.id}.correct`);
+        playSpeech(mission.dialogue?.correct?.text || 'ใช่แล้ว!', 'th-TH', 1.0, `${mission.id}.correct`);
       }
       setTimeout(() => {
         onComplete();
@@ -57,7 +57,7 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
     } else {
       // Wrong tap
       setBouncingId(choice.id);
-      const wrongText = 'ลองดูใหม่นะ'; // Usually driven by choice config in production
+      const wrongText = 'ลองดูอีกที่นะ'; // Usually driven by choice config in production
       setHintMessage({
         mascot: mission.guideMascot || 'Bingo',
         emotion: 'encourage',
@@ -101,21 +101,20 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
           </div>
         )}
 
-        <div className="w-full flex flex-col gap-4">
-          {mission.contextChoices?.map(choice => (
-             <button
-                key={choice.id}
-                onClick={() => handleTap(choice)}
-                className={`relative w-full h-28 bg-white rounded-[2rem] border-[4px] border-sky-300 shadow-[0_8px_15px_rgba(0,0,0,0.08)] overflow-hidden transition-transform active:scale-95 flex items-center justify-center ${bouncingId === choice.id ? 'animate-friendly-wiggle' : 'hover:scale-105'}`}
-             >
-                <img src={choice.image} alt={choice.id} className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-90" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
-                {/* Fallback label for draft preview if image is a placeholder */}
-                <span className="relative z-10 text-white font-display font-bold text-3xl drop-shadow-md tracking-wide">
-                  {choice.id.toUpperCase()}
-                </span>
-             </button>
-          ))}
+        <div className="w-full grid grid-cols-2 gap-4">
+          {mission.contextChoices?.map((choice, index) => {
+             const isLastOdd = index === 2 && mission.contextChoices?.length === 3;
+             return (
+               <button
+                  key={choice.id}
+                  onClick={() => handleTap(choice)}
+                  className={`relative aspect-square w-full bg-white rounded-[2rem] border-[4px] border-sky-300 shadow-[0_8px_15px_rgba(0,0,0,0.08)] overflow-hidden transition-transform active:scale-95 flex items-center justify-center ${bouncingId === choice.id ? 'animate-friendly-wiggle' : 'hover:scale-105'} ${isLastOdd ? 'col-span-2 w-[calc(50%-0.5rem)] mx-auto' : ''}`}
+               >
+                  <img src={choice.image} alt={choice.id} className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none opacity-90" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
+               </button>
+             );
+          })}
         </div>
       </div>
 

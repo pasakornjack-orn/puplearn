@@ -389,7 +389,7 @@ export const mission_B1: Mission = {
   instructionThai: 'แปรงสีฟันควรอยู่ที่ไหนนะ?',
   dialogue: {
     instruction: { text: 'แปรงสีฟันควรอยู่ที่ไหนนะ?', audioId: 'mission_B1.instruction' },
-    correct: { text: 'เก่งมาก!', audioId: 'mission_B1.correct' }
+    correct: { text: 'ใช่แล้ว!', audioId: 'mission_B1.correct' }
   },
   requiredCategories: [],
   layoutTemplate: 'match-context',
@@ -397,8 +397,8 @@ export const mission_B1: Mission = {
   centralObjectId: 'toothbrushA',
   targetContext: 'bathroom',
   contextChoices: [
-    { id: 'bathroom', image: '/contexts/bathroom-placeholder.png', wrongAudioId: 'mission_B1.wrong_bathroom' },
-    { id: 'kitchen', image: '/contexts/kitchen-placeholder.png', wrongAudioId: 'mission_B1.wrong_kitchen' },
-    { id: 'bedroom', image: '/contexts/bedroom-placeholder.png', wrongAudioId: 'mission_B1.wrong_bedroom' }
+    { id: 'bathroom', image: '/environments/bathroom.png', wrongAudioId: 'mission_B1.wrong_bathroom' },
+    { id: 'kitchen', image: '/environments/kitchen.png', wrongAudioId: 'mission_B1.wrong_kitchen' },
+    { id: 'bedroom', image: '/environments/bedroom.png', wrongAudioId: 'mission_B1.wrong_bedroom' }
   ]
 };
