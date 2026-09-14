@@ -43,6 +43,7 @@ export type Mission = {
   targetColor?: string; // Used for color hunt
   targetCount?: number; // How many items needed to complete
   layoutTemplate?: 'find-one' | 'color-hunt' | 'pick-two' | 'match-context';
+  guideMascot?: 'Bingo' | 'Peter' | 'A-Chi' | 'Pillow';
   centralObjectId?: string;
   contextChoices?: { id: string; image: string; wrongAudioId?: string }[];
   targetContext?: string;
@@ -392,6 +393,7 @@ export const mission_B1: Mission = {
   },
   requiredCategories: [],
   layoutTemplate: 'match-context',
+  guideMascot: 'Peter',
   centralObjectId: 'toothbrushA',
   targetContext: 'bathroom',
   contextChoices: [

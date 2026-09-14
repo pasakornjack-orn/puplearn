@@ -41,7 +41,7 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
     if (choice.id === mission.targetContext) {
       // Success
       setHintMessage({
-        mascot: 'Bingo',
+        mascot: mission.guideMascot || 'Bingo',
         emotion: 'happy',
         text: 'เก่งมาก!',
         audioId: `${mission.id}.correct`,
@@ -59,7 +59,7 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
       setBouncingId(choice.id);
       const wrongText = 'ลองดูใหม่นะ'; // Usually driven by choice config in production
       setHintMessage({
-        mascot: 'Bingo',
+        mascot: mission.guideMascot || 'Bingo',
         emotion: 'encourage',
         text: wrongText,
         audioId: choice.wrongAudioId,
@@ -106,7 +106,7 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
              <button
                 key={choice.id}
                 onClick={() => handleTap(choice)}
-                className={`relative w-full h-28 bg-white rounded-[2rem] border-[4px] border-sky-300 shadow-[0_8px_15px_rgba(0,0,0,0.08)] overflow-hidden transition-transform active:scale-95 flex items-center justify-center ${bouncingId === choice.id ? 'animate-friendly-wiggle border-red-400' : 'hover:scale-105'}`}
+                className={`relative w-full h-28 bg-white rounded-[2rem] border-[4px] border-sky-300 shadow-[0_8px_15px_rgba(0,0,0,0.08)] overflow-hidden transition-transform active:scale-95 flex items-center justify-center ${bouncingId === choice.id ? 'animate-friendly-wiggle' : 'hover:scale-105'}`}
              >
                 <img src={choice.image} alt={choice.id} className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-90" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
@@ -123,7 +123,7 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
         <div className="absolute inset-0 z-10 pointer-events-none">
           <div className="absolute bottom-0 left-0 w-full h-full animate-fade-in-up">
             <MascotBubble 
-              mascot={hintMessage?.mascot || 'Bingo'} 
+              mascot={hintMessage?.mascot || mission.guideMascot || 'Bingo'} 
               emotion={hintMessage?.emotion || 'guide'} 
               message={hintMessage?.text || instructionText}
               variant="mascot-gameplay-v2"
