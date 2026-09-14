@@ -127,7 +127,7 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
               message={hintMessage?.text || instructionText}
               variant="mascot-gameplay-v2"
               audioEnabled={!isAudioMuted}
-              playTrigger={hintMessage?.timestamp || Date.now()}
+              playTrigger={hintMessage?.timestamp || 0}
               audioId={hintMessage?.audioId || instructionAudioId}
               onReplay={handleReplay}
             />

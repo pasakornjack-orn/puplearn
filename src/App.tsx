@@ -710,7 +710,7 @@ useEffect(() => {
         
 
         {/* MISSION 00 ENGINE SHELL */}
-        {(gameState === 'shopping' || gameState === 'english_interaction') && levelASession.some(m => m.id === activeMission.id) && (
+        {(gameState === 'shopping' || gameState === 'english_interaction') && (levelASession.some(m => m.id === activeMission.id) || activeMission.layoutTemplate === 'match-context') && (
           <div className="absolute inset-0 flex flex-col z-10 animate-fade-in">
             <MissionEngine 
               mission={activeMission} 
@@ -739,7 +739,7 @@ useEffect(() => {
         )}
 
         {/* STATE: SHOPPING */}
-        {gameState === 'shopping' && !levelASession.some(m => m.id === activeMission.id) && (
+        {gameState === 'shopping' && !levelASession.some(m => m.id === activeMission.id) && activeMission.layoutTemplate !== 'match-context' && (
           ['find-one', 'color-hunt', 'pick-two'].includes(activeMission.layoutTemplate || '') ? (
             <div className="absolute inset-0 flex flex-col z-10 animate-fade-in">
               <ProductDisplayV2 
