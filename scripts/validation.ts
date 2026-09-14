@@ -79,7 +79,7 @@ export function validateMission(mission: Mission, strictAudio: boolean): string[
   if (!mission.layoutTemplate) reportError(`[${mission.id}] Missing layoutTemplate`);
 
   const availableChoices = new Set<string>();
-  if (mission.choices) {
+  if (mission.layoutTemplate === "match-context") { /* skip */ } else if (mission.choices) {
     for (const choice of mission.choices) {
       availableChoices.add(choice.productId);
     }
@@ -103,7 +103,7 @@ export function validateMission(mission: Mission, strictAudio: boolean): string[
     }
   }
 
-  if (mission.choices) {
+  if (mission.layoutTemplate !== "match-context" && mission.choices) {
     if (mission.choices.length === 0) reportError(`[${mission.id}] Choices array is empty`);
     const choiceIds = new Set<string>();
     for (const choice of mission.choices) {

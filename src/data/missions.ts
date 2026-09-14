@@ -15,6 +15,8 @@ export type DialogueFeedback = {
   audioId: string;
 };
 
+export type ContextChoice = { id: string; image: string; wrongAudioId?: string; };
+
 export type MissionChoice = {
   productId: string;
   wrongAudioId?: string;
@@ -40,7 +42,10 @@ export type Mission = {
   targetIds?: string[]; // Used for Level A explicitly
   targetColor?: string; // Used for color hunt
   targetCount?: number; // How many items needed to complete
-  layoutTemplate?: 'find-one' | 'color-hunt' | 'pick-two';
+  layoutTemplate?: 'find-one' | 'color-hunt' | 'pick-two' | 'match-context';
+  centralObjectId?: string;
+  contextChoices?: { id: string; image: string; wrongAudioId?: string }[];
+  targetContext?: string;
   validation?: {
     kind: 'attribute';
     field: keyof Product;
@@ -375,5 +380,23 @@ export const missionA5: Mission = {
     { productId: 'apple', wrongAudioId: 'mission_A5.wrong_apple', wrongFeedback: { text: 'นี่คือแอปเปิล... ลองหาสบู่อีกทีนะ!', audioId: 'mission_A5.wrong_apple' } },
     { productId: 'banana', wrongAudioId: 'mission_A5.wrong_banana', wrongFeedback: { text: 'นี่คือกล้วย... ลองหาสบู่อีกทีนะ!', audioId: 'mission_A5.wrong_banana' } },
     { productId: 'toothbrushA', wrongAudioId: 'mission_A5.wrong_toothbrush', wrongFeedback: { text: 'นี่คือแปรงสีฟัน... ลองหาสบู่อีกทีนะ!', audioId: 'mission_A5.wrong_toothbrush' } }
+  ]
+};
+export const mission_B1: Mission = {
+  id: 'mission_B1',
+  level: 'B',
+  instructionThai: 'แปรงสีฟันควรอยู่ที่ไหนนะ?',
+  dialogue: {
+    instruction: { text: 'แปรงสีฟันควรอยู่ที่ไหนนะ?', audioId: 'mission_B1.instruction' },
+    correct: { text: 'เก่งมาก!', audioId: 'mission_B1.correct' }
+  },
+  requiredCategories: [],
+  layoutTemplate: 'match-context',
+  centralObjectId: 'toothbrushA',
+  targetContext: 'bathroom',
+  contextChoices: [
+    { id: 'bathroom', image: '/contexts/bathroom-placeholder.png', wrongAudioId: 'mission_B1.wrong_bathroom' },
+    { id: 'kitchen', image: '/contexts/kitchen-placeholder.png', wrongAudioId: 'mission_B1.wrong_kitchen' },
+    { id: 'bedroom', image: '/contexts/bedroom-placeholder.png', wrongAudioId: 'mission_B1.wrong_bedroom' }
   ]
 };

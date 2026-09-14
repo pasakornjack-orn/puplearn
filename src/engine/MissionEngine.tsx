@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { Mission, Product } from '../data/missions';
 import { productsDB } from '../data/missions';
 import ProductDisplayV2 from '../components/ProductDisplayV2';
+import { MatchContextInteraction } from '../components/MatchContextInteraction';
 import VocabularyTeaching from '../components/VocabularyTeaching';
 import { playSpeech, playAudioSequence, stopSpeech } from '../utils/audio';
 import { getPillowSequence, audioIdMap } from '../config/audio/manifest';
@@ -187,6 +188,17 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
       onComplete(wrongTaps, replayCount);
     }
   };
+
+  
+  if (mission.layoutTemplate === 'match-context') {
+    return (
+      <MatchContextInteraction
+        mission={mission}
+        isAudioMuted={isAudioMuted}
+        onComplete={() => onComplete(wrongTaps, replayCount)}
+      />
+    );
+  }
 
   return (
     <>

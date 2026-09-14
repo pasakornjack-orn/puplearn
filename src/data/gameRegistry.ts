@@ -28,6 +28,6 @@ export const gameRegistry: GameDefinition[] = [
     title: "Bingo's Daily Life",
     coverImage: '/environments/mission-select-bg.png',
     mascot: 'Bingo',
-    missionIds: [] // Coming soon
+    missionIds: ['mission_B1'] // Draft
   }
 ];

@@ -6,7 +6,7 @@ import {
   productsDB,
   type MissionChoice 
 } from './data/missions';
-import { levelARegistry } from './data/levelARegistry';
+import { levelARegistry, levelAMissionCatalog } from './data/levelARegistry';
 import { gameRegistry } from './data/gameRegistry';
 import { getGameStatus, type AdventureState } from './utils/gameProgress';
 import ProductDisplayV2 from './components/ProductDisplayV2';
@@ -72,7 +72,19 @@ function App() {
 
   const hasPlayedSuccessRef = useRef(false);
 
+  
+  // DEV PREVIEW HACK
   useEffect(() => {
+    if (import.meta.env.DEV && window.location.hash.startsWith('#draft=')) {
+      const draftId = window.location.hash.replace('#draft=', '');
+      const entry = levelAMissionCatalog.find(e => e.mission.id === draftId);
+      if (entry) {
+        setActiveMission(entry.mission);
+        setGameState('shopping'); // Start engine
+      }
+    }
+  }, []);
+useEffect(() => {
     const handleFirstInteraction = () => {
       if (!isAudioMuted && gameState === 'home') {
         initBgm();
