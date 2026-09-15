@@ -69,16 +69,20 @@ function App() {
   const [wrongTaps, setWrongTaps] = useState(0);
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [expandedGroup, setExpandedGroup] = useState<string | null>('level-a');
+  const [isDraftPreview, setIsDraftPreview] = useState(false);
 
   const hasPlayedSuccessRef = useRef(false);
 
-  
-  // DEV PREVIEW HACK
+  const isChildFacingMission = levelASession.some(m => m.id === activeMission.id);
+  const isMissionEngineAuthorized = isChildFacingMission || Boolean(import.meta.env.DEV && isDraftPreview);
+
+  // DEV DRAFT PREVIEW
   useEffect(() => {
     if (import.meta.env.DEV && window.location.hash.startsWith('#draft=')) {
       const draftId = window.location.hash.replace('#draft=', '');
       const entry = levelAMissionCatalog.find(e => e.mission.id === draftId);
       if (entry) {
+        setIsDraftPreview(true);
         setActiveMission(entry.mission);
         setGameState('shopping'); // Start engine
       }
@@ -283,6 +287,9 @@ useEffect(() => {
   };
 
   const startMission = (mission: Mission) => {
+    if (!isDraftPreview || activeMission.id !== mission.id) {
+      setIsDraftPreview(false);
+    }
     setActiveMission(mission);
     setBasket([]);
     setHintMessage(null);
@@ -709,8 +716,8 @@ useEffect(() => {
         )}
         
 
-        {/* MISSION 00 ENGINE SHELL */}
-        {(gameState === 'shopping' || gameState === 'english_interaction') && (levelASession.some(m => m.id === activeMission.id) || activeMission.layoutTemplate === 'match-context') && (
+        {/* MISSION ENGINE SHELL */}
+        {(gameState === 'shopping' || gameState === 'english_interaction') && isMissionEngineAuthorized && (
           <div className="absolute inset-0 flex flex-col z-10 animate-fade-in">
             <MissionEngine 
               mission={activeMission} 
@@ -738,8 +745,8 @@ useEffect(() => {
           </div>
         )}
 
-        {/* STATE: SHOPPING */}
-        {gameState === 'shopping' && !levelASession.some(m => m.id === activeMission.id) && activeMission.layoutTemplate !== 'match-context' && (
+        {/* STATE: SHOPPING (LEGACY FALLBACK) */}
+        {gameState === 'shopping' && !isMissionEngineAuthorized && activeMission.id === 'mission07' && (
           ['find-one', 'color-hunt', 'pick-two'].includes(activeMission.layoutTemplate || '') ? (
             <div className="absolute inset-0 flex flex-col z-10 animate-fade-in">
               <ProductDisplayV2 
@@ -954,6 +961,7 @@ useEffect(() => {
                     <button 
                       onClick={() => {
                         setIsSessionMode(false);
+                        setIsDraftPreview(false);
                         setGameState('game_select');
                       }}
                       className="w-full bg-white text-sky-500 font-bold text-xl py-3 rounded-[2rem] shadow-[0_6px_0_rgba(0,0,0,0.05)] active:translate-y-2 active:shadow-none hover:scale-[1.02] transition-all border-4 border-sky-100 flex items-center justify-center gap-2 mt-2"
@@ -989,6 +997,7 @@ useEffect(() => {
                     <button 
                       onClick={() => {
                         setIsSessionMode(false);
+                        setIsDraftPreview(false);
                         setGameState('mission_select');
                         setBasket([]);
                         setHintMessage(null);
