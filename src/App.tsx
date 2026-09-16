@@ -60,7 +60,7 @@ function App() {
       setCompletedMissions(completed);
     };
     checkProgress();
-  }, [gameState, levelASession]); // Re-check when we return to home/mission_select
+  }, [gameState]); // Re-check when we return to home/mission_select
 
   // Session Flow State
   const [isSessionMode, setIsSessionMode] = useState(false);
@@ -388,10 +388,17 @@ useEffect(() => {
       {/* Global Background */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {gameState !== 'home' && gameState !== 'mission_select' && gameState !== 'game_select' ? (
-          <>
-            <img src="/environments/supermarket-interior-bg.png" alt="Supermarket Interior" className="w-full h-full object-cover object-center" />
-            <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]"></div>
-          </>
+          activeMission.layoutTemplate === 'match-context' ? (
+            <>
+              <img src="/environments/daily-life-bg.png" alt="Daily Life Background" className="w-full h-full object-cover object-center" />
+              <div className="absolute inset-0 bg-white/25 backdrop-blur-[1px]"></div>
+            </>
+          ) : (
+            <>
+              <img src="/environments/supermarket-interior-bg.png" alt="Supermarket Interior" className="w-full h-full object-cover object-center" />
+              <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]"></div>
+            </>
+          )
         ) : (
           <div className="absolute inset-0 opacity-[0.15] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-sky-200 via-sky-100 to-transparent" />
         )}
