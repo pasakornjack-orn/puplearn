@@ -120,9 +120,9 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
         </div>
 
         {/* Peter & Toothbrush together row */}
-        <div className="flex items-center justify-center gap-6 w-full py-0.5">
-          {/* Peter Mascot on Left */}
-          <div className="relative w-32 sm:w-36 h-32 sm:h-36 flex-shrink-0">
+        <div className="flex items-center justify-center gap-6 sm:gap-8 w-full py-0.5">
+          {/* Peter Mascot on Left - Large like Bingo */}
+          <div className="relative w-40 sm:w-48 h-40 sm:h-48 flex-shrink-0">
             <img 
               src={getMascotAsset(hintMessage?.mascot || mission.guideMascot || 'Peter', hintMessage?.emotion || 'thinking')}
               alt="Peter"
@@ -147,13 +147,13 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
 
       </div>
 
-      {/* 2. Room Choices: 2 Large Stacked Cards (Vertical) */}
+      {/* 2. Room Choices: 2 Large 1:1 Square Cards Stacked Vertically */}
       <div className="flex-1 w-full max-w-sm mx-auto flex flex-col justify-center items-center px-4 py-2 gap-3 sm:gap-4 z-20">
         {choices.map((choice) => (
           <button
             key={choice.id}
             onClick={() => handleTap(choice)}
-            className={`w-full max-w-[310px] aspect-[16/9] sm:aspect-[16/9.5] bg-white rounded-[2.2rem] p-2 sm:p-2.5 border-[5px] border-sky-300 shadow-[0_10px_20px_rgba(2,132,199,0.15)] transition-all active:scale-98 active:translate-y-1 flex items-center justify-center relative group overflow-hidden ${
+            className={`w-full max-w-[200px] sm:max-w-[220px] aspect-square bg-white rounded-[2.2rem] p-2.5 sm:p-3 border-[5px] border-sky-300 shadow-[0_10px_20px_rgba(2,132,199,0.15)] transition-all active:scale-98 active:translate-y-1 flex items-center justify-center relative group overflow-hidden ${
               bouncingId === choice.id ? 'animate-friendly-wiggle' : 'hover:scale-[1.02]'
             }`}
             aria-label={choice.id}
