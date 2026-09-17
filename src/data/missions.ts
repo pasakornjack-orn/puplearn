@@ -30,6 +30,7 @@ export type MissionDialogue = {
   correct?: DialogueFeedback;
   first_correct?: DialogueFeedback;
   complete?: DialogueFeedback;
+  wrong?: DialogueFeedback;
 };
 
 export type Mission = {
@@ -389,6 +390,7 @@ export const mission_B1: Mission = {
   instructionThai: 'แปรงสีฟันควรอยู่ที่ไหนนะ?',
   dialogue: {
     instruction: { text: 'แปรงสีฟันควรอยู่ที่ไหนนะ?', audioId: 'mission_B1.instruction' },
+    wrong: { text: 'ลองดูอีกที่นะ', audioId: 'mission_B1.wrong' },
     correct: { text: 'ใช่แล้ว!', audioId: 'mission_B1.correct' }
   },
   requiredCategories: [],
@@ -397,7 +399,7 @@ export const mission_B1: Mission = {
   centralObjectId: 'toothbrushA',
   targetContext: 'bathroom',
   contextChoices: [
-    { id: 'bathroom', image: '/environments/bathroom.png', wrongAudioId: 'mission_B1.wrong_bathroom' },
-    { id: 'kitchen', image: '/environments/kitchen.png', wrongAudioId: 'mission_B1.wrong_kitchen' }
+    { id: 'bathroom', image: '/environments/bathroom.png' },
+    { id: 'kitchen', image: '/environments/kitchen.png', wrongAudioId: 'mission_B1.wrong' }
   ]
 };

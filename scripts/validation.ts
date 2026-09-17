@@ -150,6 +150,11 @@ export function validateMission(mission: Mission, strictAudio: boolean): string[
       else checkAudioId(mission.dialogue.complete.audioId, `${mission.id} dialogue.complete`);
     }
 
+    if (mission.dialogue.wrong) {
+      if (!mission.dialogue.wrong.text || !mission.dialogue.wrong.audioId) reportError(`[${mission.id}] Incomplete wrong dialogue`);
+      else checkAudioId(mission.dialogue.wrong.audioId, `${mission.id} dialogue.wrong`);
+    }
+
     if (mission.dialogue.first_correct) {
       if (!mission.dialogue.first_correct.text || !mission.dialogue.first_correct.audioId) reportError(`[${mission.id}] Incomplete first_correct dialogue`);
       else checkAudioId(mission.dialogue.first_correct.audioId, `${mission.id} dialogue.first_correct`);
@@ -158,6 +163,14 @@ export function validateMission(mission: Mission, strictAudio: boolean): string[
     if (!mission.dialogue.correct && !mission.dialogue.complete) reportError(`[${mission.id}] Missing both dialogue.correct and dialogue.complete`);
   } else {
     reportError(`[${mission.id}] Missing dialogue configuration`);
+  }
+
+  if (mission.layoutTemplate === 'match-context' && mission.contextChoices) {
+    for (const choice of mission.contextChoices) {
+      if (choice.wrongAudioId) {
+        checkAudioId(choice.wrongAudioId, `${mission.id} wrongAudioId for context ${choice.id}`);
+      }
+    }
   }
 
   if (mission.vocabularyConfigs) {

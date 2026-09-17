@@ -54,9 +54,11 @@ function renderAudioItem(audioId: string, text: string) {
   console.log('');
 }
 
-console.log('BINGO\n');
+const guideName = (mission.guideMascot || 'Bingo').toUpperCase();
+console.log(`${guideName}\n`);
 if (mission.dialogue) {
    if (mission.dialogue.instruction?.audioId) renderAudioItem(mission.dialogue.instruction.audioId, mission.dialogue.instruction.text);
+   if (mission.dialogue.wrong?.audioId) renderAudioItem(mission.dialogue.wrong.audioId, mission.dialogue.wrong.text);
    if (mission.dialogue.first_correct?.audioId) renderAudioItem(mission.dialogue.first_correct.audioId, mission.dialogue.first_correct.text);
    if (mission.dialogue.correct?.audioId) renderAudioItem(mission.dialogue.correct.audioId, mission.dialogue.correct.text);
    if (mission.dialogue.complete?.audioId) renderAudioItem(mission.dialogue.complete.audioId, mission.dialogue.complete.text);

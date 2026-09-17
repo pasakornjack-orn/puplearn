@@ -60,18 +60,19 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
     } else {
       // Wrong tap
       setBouncingId(choice.id);
-      const wrongText = 'ลองดูอีกที่นะ';
+      const wrongText = mission.dialogue?.wrong?.text || 'ลองดูอีกที่นะ';
+      const wrongAudioId = choice.wrongAudioId || mission.dialogue?.wrong?.audioId || `${mission.id}.wrong`;
       setHintMessage({
         mascot: mission.guideMascot || 'Peter',
         emotion: 'hint',
         text: wrongText,
-        audioId: choice.wrongAudioId,
+        audioId: wrongAudioId,
         timestamp: Date.now()
       });
       
       if (!isAudioMuted) {
         stopSpeech();
-        playSpeech(wrongText, 'th-TH', 1.0, choice.wrongAudioId);
+        playSpeech(wrongText, 'th-TH', 1.0, wrongAudioId);
       }
 
       setTimeout(() => setBouncingId(null), 800);
