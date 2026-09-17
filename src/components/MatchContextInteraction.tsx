@@ -92,12 +92,12 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
   return (
     <div className="absolute inset-0 flex flex-col h-full z-10 overflow-hidden animate-fade-in pb-safe select-none">
       
-      {/* 1. Top Section: Bubble + Peter with Toothbrush Together (Moved down to floor) */}
-      <div className="w-full max-w-sm mx-auto px-4 pt-12 flex-shrink-0 z-30 flex flex-col items-center">
+      {/* 1. Top Section: Bubble + Peter with Toothbrush Together */}
+      <div className="w-full max-w-sm mx-auto px-4 pt-7 sm:pt-8 flex-shrink-0 z-30 flex flex-col items-center">
         
         {/* Speech Bubble on top */}
-        <div className="relative mb-1.5 w-full max-w-sm pointer-events-auto px-2">
-          <div className="bg-white border-[4px] border-yellow-300 rounded-[2.2rem] p-2.5 sm:p-3 pr-11 shadow-md relative text-center">
+        <div className="relative mb-1 w-full max-w-sm pointer-events-auto px-2">
+          <div className="bg-white border-[4px] border-yellow-300 rounded-[2.2rem] p-2 sm:p-2.5 pr-11 shadow-md relative text-center">
             {/* Replay button */}
             <button
               onClick={handleReplay}
@@ -120,9 +120,9 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
         </div>
 
         {/* Peter & Toothbrush together row */}
-        <div className="flex items-center justify-center gap-6 sm:gap-8 w-full py-0.5">
+        <div className="flex items-center justify-center gap-5 sm:gap-7 w-full">
           {/* Peter Mascot on Left - Large like Bingo */}
-          <div className="relative w-40 sm:w-48 h-40 sm:h-48 flex-shrink-0">
+          <div className="relative w-36 sm:w-44 h-36 sm:h-44 flex-shrink-0">
             <img 
               src={getMascotAsset(hintMessage?.mascot || mission.guideMascot || 'Peter', hintMessage?.emotion || 'thinking')}
               alt="Peter"
@@ -134,7 +134,7 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
           {centralObject && (
             <div className="relative group flex-shrink-0">
               <div className="absolute -inset-1.5 bg-yellow-300/40 rounded-[2.5rem] blur-md"></div>
-              <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-[2.2rem] p-3 border-[5px] border-yellow-300 shadow-[0_8px_20px_rgba(250,204,21,0.25)] flex items-center justify-center relative">
+              <div className="w-22 h-22 sm:w-26 sm:h-26 bg-white rounded-[2.2rem] p-2.5 sm:p-3 border-[5px] border-yellow-300 shadow-[0_8px_20px_rgba(250,204,21,0.25)] flex items-center justify-center relative">
                 <img 
                   src={centralObject.image} 
                   alt={centralObject.name} 
@@ -148,12 +148,12 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
       </div>
 
       {/* 2. Room Choices: 2 Large 1:1 Square Cards Stacked Vertically */}
-      <div className="flex-1 w-full max-w-sm mx-auto flex flex-col justify-center items-center px-4 py-2 gap-2.5 sm:gap-3.5 z-20">
+      <div className="flex-1 w-full max-w-sm mx-auto flex flex-col justify-center items-center px-4 pt-1 pb-10 sm:pb-14 gap-3 z-20">
         {choices.map((choice) => (
           <button
             key={choice.id}
             onClick={() => handleTap(choice)}
-            className={`w-full max-w-[190px] sm:max-w-[210px] aspect-square bg-white rounded-[2.2rem] p-2.5 sm:p-3 border-[5px] border-sky-300 shadow-[0_10px_20px_rgba(2,132,199,0.15)] transition-all active:scale-98 active:translate-y-1 flex items-center justify-center relative group overflow-hidden ${
+            className={`w-full max-w-[160px] sm:max-w-[180px] aspect-square bg-white rounded-[2.2rem] p-2.5 sm:p-3 border-[5px] border-sky-300 shadow-[0_10px_20px_rgba(2,132,199,0.15)] transition-all active:scale-98 active:translate-y-1 flex items-center justify-center relative group overflow-hidden ${
               bouncingId === choice.id ? 'animate-friendly-wiggle' : 'hover:scale-[1.02]'
             }`}
             aria-label={choice.id}
