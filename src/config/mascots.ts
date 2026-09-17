@@ -6,7 +6,9 @@ export const getMascotAsset = (mascot: MascotType, emotion: MascotEmotion): stri
     return emotion === 'happy' ? '/mascots/bingo-happy.png' : '/mascots/bingo-guide.png';
   }
   if (mascot === 'Peter') {
-    return emotion === 'hint' ? '/mascots/peter-hint.png' : '/mascots/peter-thinking.png';
+    if (emotion === 'happy') return '/mascots/peter-happy.png';
+    if (emotion === 'hint') return '/mascots/peter-hint.png';
+    return '/mascots/peter-thinking.png';
   }
   if (mascot === 'A-Chi') {
     return emotion === 'money' ? '/mascots/a-chi-money.png' : '/mascots/a-chi-neutral.png';

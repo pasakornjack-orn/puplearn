@@ -16,6 +16,7 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
   onComplete
 }) => {
   const [bouncingId, setBouncingId] = useState<string | null>(null);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [hintMessage, setHintMessage] = useState<{
     mascot: any;
     emotion?: any;
@@ -37,8 +38,11 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
   }, [mission, isAudioMuted, instructionText, instructionAudioId]);
 
   const handleTap = (choice: ContextChoice) => {
+    if (isCompleted) return;
+
     if (choice.id === mission.targetContext) {
       // Success
+      setIsCompleted(true);
       setHintMessage({
         mascot: mission.guideMascot || 'Peter',
         emotion: 'happy',
@@ -153,7 +157,10 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
           <button
             key={choice.id}
             onClick={() => handleTap(choice)}
-            className={`w-full max-w-[180px] sm:max-w-[200px] aspect-square bg-white rounded-[2.2rem] p-2.5 sm:p-3 border-[5px] border-sky-300 shadow-[0_10px_20px_rgba(2,132,199,0.15)] transition-all active:scale-98 active:translate-y-1 flex items-center justify-center relative group overflow-hidden ${
+            disabled={isCompleted}
+            className={`w-full max-w-[180px] sm:max-w-[200px] aspect-square bg-white rounded-[2.2rem] p-2.5 sm:p-3 border-[5px] border-sky-300 shadow-[0_10px_20px_rgba(2,132,199,0.15)] transition-all ${
+              isCompleted ? 'pointer-events-none' : 'active:scale-98 active:translate-y-1'
+            } flex items-center justify-center relative group overflow-hidden ${
               bouncingId === choice.id ? 'animate-friendly-wiggle' : 'hover:scale-[1.02]'
             }`}
             aria-label={choice.id}
