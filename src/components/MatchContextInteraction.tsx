@@ -88,19 +88,17 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
   };
 
   const choices = mission.contextChoices || [];
-  const topRowChoices = choices.slice(0, 2);
-  const bottomRowChoices = choices.slice(2);
 
   return (
     <div className="absolute inset-0 flex flex-col h-full z-10 overflow-hidden animate-fade-in pb-safe select-none">
       
-      {/* 1. Top Guide Area: Peter + Question Bubble */}
-      <div className="w-full max-w-sm mx-auto px-4 pt-1 pb-1 flex-shrink-0 z-30">
+      {/* 1. Top Guide Area: Enlarged Peter + Question Bubble */}
+      <div className="w-full max-w-sm sm:max-w-md mx-auto px-3 pt-1 pb-1 flex-shrink-0 z-30">
         <MascotBubble 
           mascot={hintMessage?.mascot || mission.guideMascot || 'Peter'} 
           emotion={hintMessage?.emotion || 'thinking'} 
           message={hintMessage?.text || instructionText}
-          variant="mascot-top-left"
+          variant="mascot-guide-large"
           audioEnabled={!isAudioMuted}
           playTrigger={hintMessage?.timestamp || 0}
           audioId={hintMessage?.audioId || instructionAudioId}
@@ -108,12 +106,12 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
         />
       </div>
 
-      {/* 2. Central Object: Prominent Toothbrush Card */}
+      {/* 2. Central Object: Enlarged Toothbrush Card */}
       {centralObject && (
-        <div className="w-full flex justify-center items-center py-1 flex-shrink-0 z-20">
+        <div className="w-full flex justify-center items-center py-2 sm:py-3 flex-shrink-0 z-20">
           <div className="relative group">
-            <div className="absolute -inset-1 bg-yellow-300/40 rounded-[2.2rem] blur-sm"></div>
-            <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-[2rem] p-3 border-[4px] border-yellow-300 shadow-[0_8px_18px_rgba(0,0,0,0.08)] flex items-center justify-center relative">
+            <div className="absolute -inset-1.5 bg-yellow-300/40 rounded-[2.8rem] blur-md"></div>
+            <div className="w-28 h-28 sm:w-32 sm:h-32 bg-white rounded-[2.5rem] p-3.5 sm:p-4 border-[5px] border-yellow-300 shadow-[0_10px_25px_rgba(250,204,21,0.2)] flex items-center justify-center relative">
               <img 
                 src={centralObject.image} 
                 alt={centralObject.name} 
@@ -124,54 +122,27 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
         </div>
       )}
 
-      {/* 3. Room Choices: 2 Top + 1 Centered Bottom, ALL EQUAL SIZE */}
-      <div className="flex-1 w-full max-w-sm mx-auto flex flex-col justify-center items-center px-4 pb-4 pt-1 z-20">
-        <div className="w-full flex flex-col items-center gap-3">
-          
-          {/* Row 1: 2 cards */}
-          <div className="flex justify-center gap-3 w-full">
-            {topRowChoices.map((choice) => (
-              <button
-                key={choice.id}
-                onClick={() => handleTap(choice)}
-                className={`w-[calc(50%-0.375rem)] max-w-[140px] aspect-square bg-white rounded-[2rem] p-2 border-[4px] border-sky-300 shadow-[0_8px_16px_rgba(0,0,0,0.08)] transition-all active:scale-95 active:translate-y-1 flex items-center justify-center relative group ${
-                  bouncingId === choice.id ? 'animate-friendly-wiggle' : 'hover:scale-[1.03]'
-                }`}
-                aria-label={choice.id}
-              >
-                <div className="w-full h-full rounded-[1.4rem] overflow-hidden relative">
-                  <img 
-                    src={choice.image} 
-                    alt={choice.id} 
-                    className="w-full h-full object-cover object-center pointer-events-none" 
-                  />
-                </div>
-              </button>
-            ))}
-          </div>
-
-          {/* Row 2: 1 centered card - EXACT SAME SIZE */}
-          <div className="flex justify-center w-full">
-            {bottomRowChoices.map((choice) => (
-              <button
-                key={choice.id}
-                onClick={() => handleTap(choice)}
-                className={`w-[calc(50%-0.375rem)] max-w-[140px] aspect-square bg-white rounded-[2rem] p-2 border-[4px] border-sky-300 shadow-[0_8px_16px_rgba(0,0,0,0.08)] transition-all active:scale-95 active:translate-y-1 flex items-center justify-center relative group ${
-                  bouncingId === choice.id ? 'animate-friendly-wiggle' : 'hover:scale-[1.03]'
-                }`}
-                aria-label={choice.id}
-              >
-                <div className="w-full h-full rounded-[1.4rem] overflow-hidden relative">
-                  <img 
-                    src={choice.image} 
-                    alt={choice.id} 
-                    className="w-full h-full object-cover object-center pointer-events-none" 
-                  />
-                </div>
-              </button>
-            ))}
-          </div>
-
+      {/* 3. Room Choices: 2 Large Side-by-Side Cards (Equal Size) */}
+      <div className="flex-1 w-full max-w-sm sm:max-w-md mx-auto flex flex-col justify-center items-center px-4 pb-6 pt-1 z-20">
+        <div className="flex justify-center items-center gap-4 sm:gap-6 w-full">
+          {choices.map((choice) => (
+            <button
+              key={choice.id}
+              onClick={() => handleTap(choice)}
+              className={`w-[calc(50%-0.5rem)] max-w-[165px] sm:max-w-[175px] aspect-square bg-white rounded-[2.5rem] p-2.5 sm:p-3 border-[5px] border-sky-300 shadow-[0_12px_24px_rgba(2,132,199,0.15)] transition-all active:scale-95 active:translate-y-1.5 flex items-center justify-center relative group ${
+                bouncingId === choice.id ? 'animate-friendly-wiggle' : 'hover:scale-[1.03]'
+              }`}
+              aria-label={choice.id}
+            >
+              <div className="w-full h-full rounded-[1.8rem] overflow-hidden relative">
+                <img 
+                  src={choice.image} 
+                  alt={choice.id} 
+                  className="w-full h-full object-cover object-center pointer-events-none" 
+                />
+              </div>
+            </button>
+          ))}
         </div>
       </div>
 

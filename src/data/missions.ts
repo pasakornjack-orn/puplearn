@@ -398,7 +398,6 @@ export const mission_B1: Mission = {
   targetContext: 'bathroom',
   contextChoices: [
     { id: 'bathroom', image: '/environments/bathroom.png', wrongAudioId: 'mission_B1.wrong_bathroom' },
-    { id: 'kitchen', image: '/environments/kitchen.png', wrongAudioId: 'mission_B1.wrong_kitchen' },
-    { id: 'bedroom', image: '/environments/bedroom.png', wrongAudioId: 'mission_B1.wrong_bedroom' }
+    { id: 'kitchen', image: '/environments/kitchen.png', wrongAudioId: 'mission_B1.wrong_kitchen' }
   ]
 };

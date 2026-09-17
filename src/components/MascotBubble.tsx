@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import type { MascotType, MascotEmotion } from '../config/mascots';
-import { getMascotAsset } from '../config/mascots';
+import { getMascotAsset, getMascotTheme } from '../config/mascots';
 import { playSpeech } from '../utils/audio';
 
 interface MascotBubbleProps {
   mascot: MascotType;
   emotion?: MascotEmotion;
   message: string;
-  variant?: 'mascot-top-left' | 'mascot-left' | 'mascot-celebrate' | 'mascot-left-floating' | 'mascot-gameplay-v2' | 'mascot-vocabulary';
+  variant?: 'mascot-top-left' | 'mascot-left' | 'mascot-celebrate' | 'mascot-left-floating' | 'mascot-gameplay-v2' | 'mascot-vocabulary' | 'mascot-guide-large';
   layout?: 'horizontal' | 'vertical'; // Deprecated, keeping for backwards compatibility if needed
   audioEnabled?: boolean;
   audioLang?: 'th-TH' | 'en-US';
@@ -158,6 +158,32 @@ export const MascotBubble = ({
         {/* Mascot on bottom */}
         <div className="relative w-48 sm:w-56 h-auto flex-shrink-0 z-10 min-h-[160px] flex items-end justify-center">
           <img key={`${mascot}-${talkKey}`} onAnimationEnd={() => setIsTalking(false)} src={imageSrc} alt={mascot} className={`w-full max-h-[22vh] max-w-none h-auto object-contain drop-shadow-xl origin-bottom ${isTalking ? 'animate-mascot-talk' : 'animate-breath'}`} />
+        </div>
+      </div>
+    );
+  }
+
+  // 1.2) LARGE TOP GUIDE (Match Context / Game 2)
+  if (variant === 'mascot-guide-large') {
+    const theme = getMascotTheme(mascot);
+    return (
+      <div className="flex items-end w-full max-w-md mx-auto pointer-events-none">
+        <div className="relative w-36 sm:w-44 h-36 sm:h-44 flex-shrink-0 z-20 -ml-1">
+          <img 
+            key={`${mascot}-${talkKey}`} 
+            onAnimationEnd={() => setIsTalking(false)} 
+            src={imageSrc} 
+            alt={mascot} 
+            className={`absolute bottom-0 w-[135%] max-w-none object-contain object-bottom drop-shadow-xl ${isTalking ? 'animate-mascot-talk' : 'animate-breath'} origin-bottom-left`} 
+          />
+        </div>
+        <div className="flex-1 mb-2 ml-3 relative pointer-events-auto">
+          <div className="bg-white border-[4px] border-yellow-300 rounded-[2.2rem] rounded-bl-xl p-3.5 sm:p-4 pr-12 shadow-lg relative z-10">
+            {renderReplayButton("absolute top-1/2 -translate-y-1/2 right-2 w-9 h-9 border-2 border-gray-100")}
+            <div className="absolute bottom-4 -left-3 w-5 h-5 bg-white border-b-[4px] border-l-[4px] border-yellow-300 transform rotate-45"></div>
+            <p className={`text-xs font-display font-bold mb-0.5 uppercase tracking-wider ${theme.nameColor}`}>{mascot}</p>
+            <p className="text-base sm:text-lg font-bold text-gray-800 leading-snug">{message}</p>
+          </div>
         </div>
       </div>
     );
