@@ -92,8 +92,8 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
   return (
     <div className="absolute inset-0 flex flex-col h-full z-10 overflow-hidden animate-fade-in pb-safe select-none">
       
-      {/* 1. Top Section: Bubble + Peter with Toothbrush Together */}
-      <div className="w-full max-w-sm mx-auto px-4 pt-1 flex-shrink-0 z-30 flex flex-col items-center">
+      {/* 1. Top Section: Bubble + Peter with Toothbrush Together (Moved down to floor) */}
+      <div className="w-full max-w-sm mx-auto px-4 pt-12 flex-shrink-0 z-30 flex flex-col items-center">
         
         {/* Speech Bubble on top */}
         <div className="relative mb-1.5 w-full max-w-sm pointer-events-auto px-2">
@@ -148,12 +148,12 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
       </div>
 
       {/* 2. Room Choices: 2 Large 1:1 Square Cards Stacked Vertically */}
-      <div className="flex-1 w-full max-w-sm mx-auto flex flex-col justify-center items-center px-4 py-2 gap-3 sm:gap-4 z-20">
+      <div className="flex-1 w-full max-w-sm mx-auto flex flex-col justify-center items-center px-4 py-2 gap-2.5 sm:gap-3.5 z-20">
         {choices.map((choice) => (
           <button
             key={choice.id}
             onClick={() => handleTap(choice)}
-            className={`w-full max-w-[200px] sm:max-w-[220px] aspect-square bg-white rounded-[2.2rem] p-2.5 sm:p-3 border-[5px] border-sky-300 shadow-[0_10px_20px_rgba(2,132,199,0.15)] transition-all active:scale-98 active:translate-y-1 flex items-center justify-center relative group overflow-hidden ${
+            className={`w-full max-w-[190px] sm:max-w-[210px] aspect-square bg-white rounded-[2.2rem] p-2.5 sm:p-3 border-[5px] border-sky-300 shadow-[0_10px_20px_rgba(2,132,199,0.15)] transition-all active:scale-98 active:translate-y-1 flex items-center justify-center relative group overflow-hidden ${
               bouncingId === choice.id ? 'animate-friendly-wiggle' : 'hover:scale-[1.02]'
             }`}
             aria-label={choice.id}
