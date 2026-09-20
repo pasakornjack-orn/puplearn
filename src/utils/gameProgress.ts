@@ -5,9 +5,9 @@ export type AdventureState = 'coming_soon' | 'locked' | 'available' | 'completed
 
 export function getGameStatus(
   game: GameDefinition,
-  index: number,
+  _index: number,
   completedMissions: Record<string, boolean>,
-  previousGameStatus: AdventureState | null
+  _previousGameStatus: AdventureState | null
 ): AdventureState {
   const playableMissions = game.missionIds
     .map(id => levelARegistry.find(r => r.mission.id === id))
@@ -23,9 +23,5 @@ export function getGameStatus(
     return 'completed';
   }
 
-  if (index === 0 || previousGameStatus === 'completed') {
-    return 'available';
-  }
-
-  return 'locked';
+  return 'available';
 }

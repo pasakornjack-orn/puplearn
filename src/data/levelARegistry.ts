@@ -29,7 +29,7 @@ export const levelAMissionCatalog: CatalogEntry[] = [
 , {
     mission: mission_B1,
     cardImage: productsDB.toothbrushA.image,
-    status: 'ready_to_enable'
+    status: 'enabled'
   }
 ];
 
