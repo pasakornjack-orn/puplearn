@@ -25,7 +25,7 @@ export const gameRegistry: GameDefinition[] = [
   },
   {
     id: 'game_daily_life',
-    title: "Bingo's Daily Life",
+    title: "Peter's Daily Life",
     coverImage: '/environments/mission-select-bg.png',
     mascot: 'Peter',
     missionIds: ['mission_B1']
