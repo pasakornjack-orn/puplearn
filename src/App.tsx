@@ -580,8 +580,12 @@ useEffect(() => {
                         )}
                         
                         {/* Mascot Decoration */}
-                        {isPlayable && game.mascot === 'Bingo' && (
-                          <img src="/mascots/bingo-happy.png" alt="Bingo" className="absolute -bottom-2 -right-2 w-32 h-32 object-contain drop-shadow-md" />
+                        {isPlayable && game.mascot && (
+                          <img 
+                            src={getMascotAsset(game.mascot, 'happy')} 
+                            alt={game.mascot} 
+                            className="absolute -bottom-2 -right-2 w-32 h-32 object-contain drop-shadow-md" 
+                          />
                         )}
 
                         {status === 'coming_soon' && (
