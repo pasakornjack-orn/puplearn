@@ -217,6 +217,16 @@ export const productsDB: Record<string, Product> = {
     color: 'bg-amber-50 border-amber-300',
     colorName: 'brown',
     category: 'toy'
+  },
+  fryingPanYellow: {
+    id: 'fryingPanYellow',
+    name: 'กระทะ',
+    englishName: 'Frying Pan',
+    price: 25,
+    image: '/products/frying-pan-yellow.png',
+    color: 'bg-yellow-50 border-yellow-300',
+    colorName: 'yellow',
+    category: 'other'
   }
 };
 
@@ -401,5 +411,25 @@ export const mission_B1: Mission = {
   contextChoices: [
     { id: 'bathroom', image: '/environments/bathroom.png' },
     { id: 'kitchen', image: '/environments/kitchen.png', wrongAudioId: 'mission_B1.wrong' }
+  ]
+};
+
+export const mission_B2: Mission = {
+  id: 'mission_B2',
+  level: 'B',
+  instructionThai: 'กระทะควรอยู่ที่ไหนนะ?',
+  dialogue: {
+    instruction: { text: 'กระทะควรอยู่ที่ไหนนะ?', audioId: 'mission_B2.instruction' },
+    wrong: { text: 'ลองดูอีกที่นะ', audioId: 'mission_B2.wrong' },
+    correct: { text: 'ใช่แล้ว!', audioId: 'mission_B2.correct' }
+  },
+  requiredCategories: [],
+  layoutTemplate: 'match-context',
+  guideMascot: 'Peter',
+  centralObjectId: 'fryingPanYellow',
+  targetContext: 'kitchen',
+  contextChoices: [
+    { id: 'kitchen', image: '/environments/kitchen.png' },
+    { id: 'bedroom', image: '/environments/bedroom.png', wrongAudioId: 'mission_B2.wrong' }
   ]
 };

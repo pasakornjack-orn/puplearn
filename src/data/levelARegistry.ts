@@ -1,4 +1,4 @@
-import { mission00, missionA2, missionA3, missionA4, missionA5, missionA6, mission_B1 } from './missions';
+import { mission00, missionA2, missionA3, missionA4, missionA5, missionA6, mission_B1, mission_B2 } from './missions';
 import { productsDB } from './missions';
 import type { Mission } from './missions';
 
@@ -30,6 +30,11 @@ export const levelAMissionCatalog: CatalogEntry[] = [
     mission: mission_B1,
     cardImage: productsDB.toothbrushA.image,
     status: 'enabled'
+  }
+, {
+    mission: mission_B2,
+    cardImage: productsDB.fryingPanYellow.image,
+    status: 'draft'
   }
 ];
 
