@@ -44,6 +44,10 @@ export const audioAssets = {
   a6WrongSoap: '/audio/a6/bingo/wrong_soap.mp3',
   a6WrongApple: '/audio/a6/bingo/wrong_apple.mp3',
   a6WrongBanana: '/audio/a6/bingo/wrong_banana.mp3',
+  // Mission B1 (Peter)
+  b1Instruction: '/audio/b1/peter/instruction.mp3',
+  b1Wrong: '/audio/b1/peter/wrong.mp3',
+  b1Correct: '/audio/b1/peter/correct.mp3',
 };
 
 // Primary mapping from audioId to MP3 path – source of truth for production audio
@@ -85,6 +89,10 @@ export const audioIdMap: Record<string, string> = {
   'mission_A6.wrong_soap': audioAssets.a6WrongSoap,
   'mission_A6.wrong_apple': audioAssets.a6WrongApple,
   'mission_A6.wrong_banana': audioAssets.a6WrongBanana,
+  // Mission B1 (Peter)
+  'mission_B1.instruction': audioAssets.b1Instruction,
+  'mission_B1.wrong': audioAssets.b1Wrong,
+  'mission_B1.correct': audioAssets.b1Correct,
   // Vocabulary (Pillow)
   'vocab.apple': audioAssets.vocabApple,
   'vocab.banana': audioAssets.vocabBanana,
