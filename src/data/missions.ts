@@ -227,6 +227,46 @@ export const productsDB: Record<string, Product> = {
     color: 'bg-yellow-50 border-yellow-300',
     colorName: 'yellow',
     category: 'other'
+  },
+  pillowBlue: {
+    id: 'pillowBlue',
+    name: 'หมอน',
+    englishName: 'Pillow',
+    price: 15,
+    image: '/products/pillow-blue.png',
+    color: 'bg-sky-50 border-sky-300',
+    colorName: 'blue',
+    category: 'other'
+  },
+  buildingBlocks: {
+    id: 'buildingBlocks',
+    name: 'บล็อกของเล่น',
+    englishName: 'Building Blocks',
+    price: 20,
+    image: '/products/building-blocks.png',
+    color: 'bg-amber-50 border-amber-300',
+    colorName: 'yellow',
+    category: 'toy'
+  },
+  sneakersPink: {
+    id: 'sneakersPink',
+    name: 'รองเท้า',
+    englishName: 'Sneakers',
+    price: 30,
+    image: '/products/sneakers-pink.png',
+    color: 'bg-pink-50 border-pink-300',
+    colorName: 'pink',
+    category: 'other'
+  },
+  shampooBlue: {
+    id: 'shampooBlue',
+    name: 'แชมพู',
+    englishName: 'Shampoo',
+    price: 18,
+    image: '/products/shampoo-blue.png',
+    color: 'bg-blue-50 border-blue-300',
+    colorName: 'blue',
+    category: 'other'
   }
 };
 
@@ -433,3 +473,84 @@ export const mission_B2: Mission = {
     { id: 'bedroom', image: '/environments/bedroom.png', wrongAudioId: 'mission_B2.wrong' }
   ]
 };
+
+export const mission_B3: Mission = {
+  id: 'mission_B3',
+  level: 'B',
+  instructionThai: 'หมอนควรอยู่ที่ไหนนะ?',
+  dialogue: {
+    instruction: { text: 'หมอนควรอยู่ที่ไหนนะ?', audioId: 'mission_B3.instruction' },
+    wrong: { text: 'ลองดูอีกที่นะ', audioId: 'mission_B3.wrong' },
+    correct: { text: 'ใช่แล้ว!', audioId: 'mission_B3.correct' }
+  },
+  requiredCategories: [],
+  layoutTemplate: 'match-context',
+  guideMascot: 'Peter',
+  centralObjectId: 'pillowBlue',
+  targetContext: 'bedroom',
+  contextChoices: [
+    { id: 'bedroom', image: '/environments/bedroom.png' },
+    { id: 'kitchen', image: '/environments/kitchen.png', wrongAudioId: 'mission_B3.wrong' }
+  ]
+};
+
+export const mission_B4: Mission = {
+  id: 'mission_B4',
+  level: 'B',
+  instructionThai: 'บล็อกของเล่นควรอยู่ที่ไหนนะ?',
+  dialogue: {
+    instruction: { text: 'บล็อกของเล่นควรอยู่ที่ไหนนะ?', audioId: 'mission_B4.instruction' },
+    wrong: { text: 'ลองดูอีกที่นะ', audioId: 'mission_B4.wrong' },
+    correct: { text: 'ใช่แล้ว!', audioId: 'mission_B4.correct' }
+  },
+  requiredCategories: [],
+  layoutTemplate: 'match-context',
+  guideMascot: 'Peter',
+  centralObjectId: 'buildingBlocks',
+  targetContext: 'playroom',
+  contextChoices: [
+    { id: 'playroom', image: '/environments/Playroom.png' },
+    { id: 'bathroom', image: '/environments/bathroom.png', wrongAudioId: 'mission_B4.wrong' }
+  ]
+};
+
+export const mission_B5: Mission = {
+  id: 'mission_B5',
+  level: 'B',
+  instructionThai: 'รองเท้าควรเก็บไว้ที่ไหนนะ?',
+  dialogue: {
+    instruction: { text: 'รองเท้าควรเก็บไว้ที่ไหนนะ?', audioId: 'mission_B5.instruction' },
+    wrong: { text: 'ลองดูอีกที่นะ', audioId: 'mission_B5.wrong' },
+    correct: { text: 'ใช่แล้ว!', audioId: 'mission_B5.correct' }
+  },
+  requiredCategories: [],
+  layoutTemplate: 'match-context',
+  guideMascot: 'Peter',
+  centralObjectId: 'sneakersPink',
+  targetContext: 'entryway',
+  contextChoices: [
+    { id: 'entryway', image: '/environments/Entryway.png' },
+    { id: 'kitchen', image: '/environments/kitchen.png', wrongAudioId: 'mission_B5.wrong' }
+  ]
+};
+
+export const mission_B6: Mission = {
+  id: 'mission_B6',
+  level: 'B',
+  instructionThai: 'แชมพูควรอยู่ที่ไหนนะ?',
+  dialogue: {
+    instruction: { text: 'แชมพูควรอยู่ที่ไหนนะ?', audioId: 'mission_B6.instruction' },
+    wrong: { text: 'ลองดูอีกที่นะ', audioId: 'mission_B6.wrong' },
+    correct: { text: 'ใช่แล้ว!', audioId: 'mission_B6.correct' }
+  },
+  requiredCategories: [],
+  layoutTemplate: 'match-context',
+  guideMascot: 'Peter',
+  centralObjectId: 'shampooBlue',
+  targetContext: 'bathroom',
+  contextChoices: [
+    { id: 'bathroom', image: '/environments/bathroom.png' },
+    { id: 'playroom', image: '/environments/Playroom.png', wrongAudioId: 'mission_B6.wrong' }
+  ]
+};
+

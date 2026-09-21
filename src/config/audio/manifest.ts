@@ -50,6 +50,14 @@ export const audioAssets = {
   b1Correct: '/audio/b1/peter/correct.mp3',
   // Mission B2 (Peter)
   b2Instruction: '/audio/b2/peter/instruction.mp3',
+  // Mission B3 (Peter)
+  b3Instruction: '/audio/b3/peter/instruction.mp3',
+  // Mission B4 (Peter)
+  b4Instruction: '/audio/b4/peter/instruction.mp3',
+  // Mission B5 (Peter)
+  b5Instruction: '/audio/b5/peter/instruction.mp3',
+  // Mission B6 (Peter)
+  b6Instruction: '/audio/b6/peter/instruction.mp3',
 };
 
 // Primary mapping from audioId to MP3 path – source of truth for production audio
@@ -99,6 +107,22 @@ export const audioIdMap: Record<string, string> = {
   'mission_B2.instruction': audioAssets.b2Instruction,
   'mission_B2.wrong': audioAssets.b1Wrong,
   'mission_B2.correct': audioAssets.b1Correct,
+  // Mission B3 (Peter - Reuses approved B1 wrong & correct audio)
+  'mission_B3.instruction': audioAssets.b3Instruction,
+  'mission_B3.wrong': audioAssets.b1Wrong,
+  'mission_B3.correct': audioAssets.b1Correct,
+  // Mission B4 (Peter - Reuses approved B1 wrong & correct audio)
+  'mission_B4.instruction': audioAssets.b4Instruction,
+  'mission_B4.wrong': audioAssets.b1Wrong,
+  'mission_B4.correct': audioAssets.b1Correct,
+  // Mission B5 (Peter - Reuses approved B1 wrong & correct audio)
+  'mission_B5.instruction': audioAssets.b5Instruction,
+  'mission_B5.wrong': audioAssets.b1Wrong,
+  'mission_B5.correct': audioAssets.b1Correct,
+  // Mission B6 (Peter - Reuses approved B1 wrong & correct audio)
+  'mission_B6.instruction': audioAssets.b6Instruction,
+  'mission_B6.wrong': audioAssets.b1Wrong,
+  'mission_B6.correct': audioAssets.b1Correct,
   // Vocabulary (Pillow)
   'vocab.apple': audioAssets.vocabApple,
   'vocab.banana': audioAssets.vocabBanana,

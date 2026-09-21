@@ -78,15 +78,21 @@ function App() {
 
   // DEV DRAFT PREVIEW
   useEffect(() => {
-    if (import.meta.env.DEV && window.location.hash.startsWith('#draft=')) {
-      const draftId = window.location.hash.replace('#draft=', '');
-      const entry = levelAMissionCatalog.find(e => e.mission.id === draftId);
-      if (entry) {
-        setIsDraftPreview(true);
-        setActiveMission(entry.mission);
-        setGameState('shopping'); // Start engine
+    const handleHash = () => {
+      if (import.meta.env.DEV && window.location.hash.startsWith('#draft=')) {
+        const draftId = window.location.hash.replace('#draft=', '');
+        const entry = levelAMissionCatalog.find(e => e.mission.id === draftId);
+        if (entry) {
+          setIsDraftPreview(true);
+          setActiveMission(entry.mission);
+          setGameState('shopping'); // Start engine
+        }
       }
-    }
+    };
+
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
   }, []);
 useEffect(() => {
     const handleFirstInteraction = () => {
