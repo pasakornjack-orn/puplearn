@@ -100,7 +100,9 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
         playSpeech(wrongText, 'th-TH', 1.0, wrongAudioId);
       }
 
-      setTimeout(() => setBouncingId(null), 800);
+      setTimeout(() => {
+        setBouncingId(null);
+      }, 800);
     }
   };
 
@@ -178,27 +180,39 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
 
       {/* 2. Room Choices: 2 Large 1:1 Square Cards Stacked Vertically */}
       <div className="flex-1 w-full max-w-sm mx-auto flex flex-col justify-start items-center px-4 pt-1 pb-8 sm:pb-10 gap-2.5 sm:gap-3 z-20">
-        {shuffledChoices.map((choice) => (
-          <button
-            key={choice.id}
-            onClick={() => handleTap(choice)}
-            disabled={isCompleted}
-            className={`w-full max-w-[180px] sm:max-w-[200px] aspect-square bg-white rounded-[2.2rem] p-2.5 sm:p-3 border-[5px] border-sky-300 shadow-[0_10px_20px_rgba(2,132,199,0.15)] transition-all ${
-              isCompleted ? 'pointer-events-none' : 'active:scale-98 active:translate-y-1'
-            } flex items-center justify-center relative group overflow-hidden ${
-              bouncingId === choice.id ? 'animate-friendly-wiggle' : 'hover:scale-[1.02]'
-            }`}
-            aria-label={choice.id}
-          >
-            <div className="w-full h-full rounded-[1.6rem] overflow-hidden relative">
-              <img 
-                src={choice.image} 
-                alt={choice.id} 
-                className="w-full h-full object-cover object-center pointer-events-none" 
-              />
-            </div>
-          </button>
-        ))}
+        {shuffledChoices.map((choice) => {
+          const isCorrect = isCompleted && choice.id === mission.targetContext;
+          const isWrong = bouncingId === choice.id;
+          const isOtherInactive = isCompleted && choice.id !== mission.targetContext;
+
+          return (
+            <button
+              key={choice.id}
+              onClick={() => handleTap(choice)}
+              disabled={isCompleted}
+              className={`w-full max-w-[180px] sm:max-w-[200px] aspect-square bg-white rounded-[2.2rem] p-2.5 sm:p-3 border-[5px] flex items-center justify-center relative group overflow-hidden transition-all duration-200 cursor-pointer ${
+                isCorrect
+                  ? 'border-emerald-400 ring-4 ring-emerald-300/80 shadow-[0_12px_28px_rgba(16,185,129,0.35)] scale-105 animate-card-select'
+                  : isWrong
+                  ? 'border-amber-400 ring-4 ring-amber-300/80 shadow-[0_8px_20px_rgba(251,191,36,0.3)] animate-friendly-wiggle'
+                  : isOtherInactive
+                  ? 'border-sky-200 opacity-60 scale-95 pointer-events-none'
+                  : 'border-sky-300 shadow-[0_10px_20px_rgba(2,132,199,0.15)] hover:border-sky-400 hover:scale-[1.04] hover:-translate-y-1 hover:shadow-[0_16px_28px_rgba(2,132,199,0.25)] active:scale-92 active:translate-y-1'
+              }`}
+              aria-label={choice.id}
+            >
+              <div className="w-full h-full rounded-[1.6rem] overflow-hidden relative">
+                <img 
+                  src={choice.image} 
+                  alt={choice.id} 
+                  className={`w-full h-full object-cover object-center pointer-events-none transition-transform duration-300 ${
+                    isCorrect ? 'scale-105' : 'group-hover:scale-105 group-active:scale-95'
+                  }`} 
+                />
+              </div>
+            </button>
+          );
+        })}
       </div>
 
     </div>
