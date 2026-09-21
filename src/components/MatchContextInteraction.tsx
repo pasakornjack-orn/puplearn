@@ -7,8 +7,17 @@ import { playSpeech, stopSpeech } from '../utils/audio';
 interface MatchContextInteractionProps {
   mission: Mission;
   isAudioMuted: boolean;
-  onComplete: () => void;
+  onComplete: (wrongTaps?: number, replayCount?: number) => void;
 }
+
+const shuffleChoices = (items: ContextChoice[]): ContextChoice[] => {
+  const array = [...items];
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
 
 export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = ({
   mission,
@@ -17,6 +26,11 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
 }) => {
   const [bouncingId, setBouncingId] = useState<string | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [shuffledChoices, setShuffledChoices] = useState<ContextChoice[]>(() =>
+    shuffleChoices(mission.contextChoices || [])
+  );
+  const [wrongTaps, setWrongTaps] = useState(0);
+  const [replayCount, setReplayCount] = useState(0);
   const [hintMessage, setHintMessage] = useState<{
     mascot: any;
     emotion?: any;
@@ -29,7 +43,17 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
   const instructionText = mission.dialogue?.instruction?.text || mission.instructionThai;
   const instructionAudioId = mission.dialogue?.instruction?.audioId || `${mission.id}.instruction`;
 
-  // On mount instruction
+  // On mount or mission switch: shuffle choices and reset state
+  useEffect(() => {
+    setShuffledChoices(shuffleChoices(mission.contextChoices || []));
+    setIsCompleted(false);
+    setHintMessage(null);
+    setBouncingId(null);
+    setWrongTaps(0);
+    setReplayCount(0);
+  }, [mission.id]);
+
+  // On mount instruction audio
   useEffect(() => {
     if (!isAudioMuted) {
       stopSpeech();
@@ -55,10 +79,11 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
         playSpeech(mission.dialogue?.correct?.text || 'ใช่แล้ว!', 'th-TH', 1.0, `${mission.id}.correct`);
       }
       setTimeout(() => {
-        onComplete();
+        onComplete(wrongTaps, replayCount);
       }, 2000);
     } else {
       // Wrong tap
+      setWrongTaps(prev => prev + 1);
       setBouncingId(choice.id);
       const wrongText = mission.dialogue?.wrong?.text || 'ลองดูอีกที่นะ';
       const wrongAudioId = choice.wrongAudioId || mission.dialogue?.wrong?.audioId || `${mission.id}.wrong`;
@@ -80,6 +105,7 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
   };
 
   const handleReplay = () => {
+    setReplayCount(prev => prev + 1);
     const msgText = hintMessage ? hintMessage.text : instructionText;
     const msgAudioId = hintMessage ? hintMessage.audioId : instructionAudioId;
     if (!isAudioMuted) {
@@ -91,8 +117,6 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
       }
     }
   };
-
-  const choices = mission.contextChoices || [];
 
   return (
     <div className="absolute inset-0 flex flex-col h-full z-10 overflow-hidden animate-fade-in pb-safe select-none">
@@ -154,7 +178,7 @@ export const MatchContextInteraction: React.FC<MatchContextInteractionProps> = (
 
       {/* 2. Room Choices: 2 Large 1:1 Square Cards Stacked Vertically */}
       <div className="flex-1 w-full max-w-sm mx-auto flex flex-col justify-start items-center px-4 pt-1 pb-8 sm:pb-10 gap-2.5 sm:gap-3 z-20">
-        {choices.map((choice) => (
+        {shuffledChoices.map((choice) => (
           <button
             key={choice.id}
             onClick={() => handleTap(choice)}

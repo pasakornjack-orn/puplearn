@@ -352,9 +352,12 @@ Do not randomly place products freely around the screen.
 
 ---
 
-# 8. Product Randomization
+# 8. Product and Choice Randomization
 
-Level A product choices should be shuffled inside the ProductGrid slots when appropriate.
+All player choice options (both Game 1 ProductGrid slots and Game 2 Match-Context room cards) MUST ALWAYS BE SHUFFLED.
+
+- Level A product choices must be shuffled inside the ProductGrid slots.
+- Game 2 Match Context choices (rooms/environments, e.g. Bathroom vs Bedroom, Kitchen vs Bedroom) must always be shuffled so the correct answer is never statically fixed in the top or bottom position.
 
 Randomize:
 
@@ -370,8 +373,9 @@ Preserve:
 
 Do not randomize:
 
-- Bingo position
-- basket position
+- Mascot position
+- basket position (in Game 1)
+- central object position (in Game 2)
 - main UI structure
 - CTA positions
 

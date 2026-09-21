@@ -193,9 +193,10 @@ export const MissionEngine: React.FC<MissionEngineProps> = ({ mission, isAudioMu
   if (mission.layoutTemplate === 'match-context') {
     return (
       <MatchContextInteraction
+        key={mission.id}
         mission={mission}
         isAudioMuted={isAudioMuted}
-        onComplete={() => onComplete(wrongTaps, replayCount)}
+        onComplete={(wrong, replay) => onComplete(wrong ?? wrongTaps, replay ?? replayCount)}
       />
     );
   }
