@@ -28,6 +28,13 @@ export const gameRegistry: GameDefinition[] = [
     title: "Peter's Daily Life",
     coverImage: '/environments/mission-select-bg.png',
     mascot: 'Peter',
-    missionIds: ['mission_B1']
+    missionIds: [
+      'mission_B1',
+      'mission_B2',
+      'mission_B3',
+      'mission_B4',
+      'mission_B5',
+      'mission_B6'
+    ]
   }
 ];

@@ -34,27 +34,27 @@ export const levelAMissionCatalog: CatalogEntry[] = [
 , {
     mission: mission_B2,
     cardImage: productsDB.fryingPanYellow.image,
-    status: 'draft'
+    status: 'enabled'
   }
 , {
     mission: mission_B3,
     cardImage: productsDB.pillowBlue.image,
-    status: 'draft'
+    status: 'enabled'
   }
 , {
     mission: mission_B4,
     cardImage: productsDB.buildingBlocks.image,
-    status: 'draft'
+    status: 'enabled'
   }
 , {
     mission: mission_B5,
     cardImage: productsDB.sneakersPink.image,
-    status: 'draft'
+    status: 'enabled'
   }
 , {
     mission: mission_B6,
     cardImage: productsDB.shampooBlue.image,
-    status: 'draft'
+    status: 'enabled'
   }
 ];
 
