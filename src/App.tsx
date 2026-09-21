@@ -941,76 +941,82 @@ useEffect(() => {
         )}
 
         {/* STATE: COMPLETED */}
-        {gameState === 'completed' && (
-          <div className="animate-fade-in-up flex-1 flex flex-col items-center justify-start gap-2 sm:gap-4 text-center px-4 relative z-10 pt-4 pb-4 overflow-hidden">
-            
-            {/* Top Area: Excellent & Star */}
-            <div className="relative z-20 w-full flex flex-col items-center flex-1 justify-start">
-              <div className="w-full bg-white rounded-[3rem] border-b-[8px] border-yellow-100 shadow-[0_15px_30px_rgba(0,0,0,0.1)] px-4 pb-6 pt-4 flex flex-col items-center max-w-[300px]">
-                <div className="text-[60px] sm:text-[80px] animate-bounce drop-shadow-[0_20px_20px_rgba(250,204,21,0.5)] leading-none mb-1">🌟</div>
-                <p className="text-3xl sm:text-4xl font-display font-bold uppercase text-green-500 tracking-wide drop-shadow-sm mb-2">Excellent!</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-700 bg-gray-50/80 px-4 py-1.5 rounded-full border-2 border-gray-100 shadow-sm">เก่งมากเลย!</p>
-              </div>
-            </div>
+        {gameState === 'completed' && (() => {
+          const isLastSessionMission = isSessionMode && sessionIndex === levelASession.length - 1;
+          const completedMascot: MascotType = isLastSessionMission
+            ? ((activeGame.mascot as MascotType) || (activeMission.guideMascot as MascotType) || 'Bingo')
+            : (activeMission.guideMascot === 'Peter' ? 'Peter' : 'Pillow');
 
-            {/* Bottom Area: Mascot & CTA */}
-            <div className="relative z-10 w-full max-w-sm flex flex-col items-center pb-2 mt-2 flex-shrink-0">
-              
-              {/* Floating Mascot behind/above CTA */}
-              <div className="w-full flex justify-center mb-2 relative z-20 pointer-events-none">
-                <img 
-                  src={getMascotAsset(isSessionMode && sessionIndex === levelASession.length - 1 ? "Bingo" : "Pillow", 'happy')} 
-                  alt="Mascot" 
-                  className="w-40 sm:w-48 max-h-[22vh] h-auto object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.15)] animate-bounce-twice relative z-10" 
-                />
+          return (
+            <div className="animate-fade-in-up flex-1 flex flex-col items-center justify-center gap-1 sm:gap-2.5 text-center px-4 relative z-10 pt-1 sm:pt-2 pb-5 sm:pb-7 overflow-y-auto w-full">
+              {/* Top Area: Excellent & Star */}
+              <div className="relative z-20 w-full flex flex-col items-center flex-shrink-0">
+                <div className="w-full bg-white rounded-[2.2rem] sm:rounded-[2.8rem] border-b-[6px] sm:border-b-[8px] border-yellow-100 shadow-[0_10px_25px_rgba(0,0,0,0.08)] px-4 py-2 sm:py-3 flex flex-col items-center max-w-[260px] sm:max-w-[285px]">
+                  <div className="text-[42px] sm:text-[54px] animate-bounce drop-shadow-[0_15px_15px_rgba(250,204,21,0.4)] leading-none mb-0.5">🌟</div>
+                  <p className="text-2xl sm:text-3xl font-display font-bold uppercase text-green-500 tracking-wide drop-shadow-sm mb-1">Excellent!</p>
+                  <p className="text-sm sm:text-base font-bold text-gray-700 bg-gray-50/80 px-3.5 py-0.5 sm:py-1 rounded-full border-2 border-gray-100 shadow-sm">เก่งมากเลย!</p>
+                </div>
               </div>
 
-              {isSessionMode && sessionIndex === levelASession.length - 1 ? (
-                <>
-                  <h2 className="text-3xl font-bold text-green-600 mb-8 drop-shadow-sm tracking-wide bg-white/80 px-6 py-2 rounded-full border-2 border-green-200 relative z-30 mt-4">ทำภารกิจในการผจญภัยนี้ครบแล้ว!</h2>
-                  <div className="w-full flex flex-col gap-3 relative z-30">
+              {/* Bottom Area: Mascot & CTA */}
+              <div className="relative z-10 w-full max-w-xs sm:max-w-sm flex flex-col items-center flex-shrink-0 mt-0.5">
+                {/* Floating Mascot */}
+                <div className="w-full flex justify-center mb-1 relative z-20 pointer-events-none">
+                  <img 
+                    src={getMascotAsset(completedMascot, 'happy')} 
+                    alt={completedMascot} 
+                    className="w-28 sm:w-36 max-h-[15vh] sm:max-h-[18vh] h-auto object-contain drop-shadow-[0_12px_20px_rgba(0,0,0,0.12)] animate-bounce-twice relative z-10" 
+                  />
+                </div>
+
+                {isLastSessionMission ? (
+                  <>
+                    <h2 className="text-sm sm:text-base font-bold text-green-700 mb-2 sm:mb-2.5 drop-shadow-sm tracking-wide bg-white/95 px-4 py-1 sm:py-1.5 rounded-full border-2 border-green-200 relative z-30 shadow-sm">
+                      ทำภารกิจในการผจญภัยนี้ครบแล้ว!
+                    </h2>
+                    <div className="w-full flex flex-col gap-2 relative z-30">
+                      <button 
+                        onClick={startSession}
+                        className="w-full bg-green-500 text-white font-bold text-lg sm:text-xl py-2.5 sm:py-3 rounded-[2rem] shadow-[0_5px_0_rgb(22,163,74),_0_10px_15px_rgba(0,0,0,0.12)] active:translate-y-1 active:shadow-[0_0_0_rgb(22,163,74)] hover:scale-[1.02] transition-all border-[4px] border-green-300 tracking-wide cursor-pointer"
+                      >
+                        เล่นอีกครั้ง
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setIsSessionMode(false);
+                          setIsDraftPreview(false);
+                          setGameState('game_select');
+                        }}
+                        className="w-full bg-white text-sky-500 font-bold text-sm sm:text-base py-2 sm:py-2.5 rounded-[1.8rem] shadow-[0_3px_0_rgba(0,0,0,0.05)] active:translate-y-1 active:shadow-none hover:scale-[1.02] transition-all border-2 border-sky-100 flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
+                        กลับไปเลือกเกม
+                      </button>
+                    </div>
+                  </>
+                ) : isSessionMode ? (
+                  <div className="w-full flex flex-col gap-2 relative z-30 mt-0.5">
                     <button 
-                      onClick={startSession}
-                      className="w-full bg-green-500 text-white font-bold text-2xl py-4 rounded-[2.5rem] shadow-[0_8px_0_rgb(22,163,74),_0_15px_20px_rgba(0,0,0,0.15)] active:translate-y-2 active:shadow-[0_0_0_rgb(22,163,74)] hover:scale-[1.02] transition-all border-[6px] border-green-300 tracking-wide"
+                      onClick={nextSessionMission}
+                      className="w-full bg-sky-500 text-white font-bold text-xl sm:text-2xl py-3 sm:py-3.5 rounded-[2rem] shadow-[0_5px_0_rgb(2,132,199),_0_10px_15px_rgba(0,0,0,0.12)] active:translate-y-1 active:shadow-[0_0_0_rgb(2,132,199)] hover:scale-[1.02] transition-all border-[4px] border-sky-300 tracking-wide animate-[pulse_2s_infinite] cursor-pointer"
                     >
-                      เล่นอีกครั้ง
+                      ภารกิจถัดไป
                     </button>
-                    <button 
-                      onClick={() => {
-                        setIsSessionMode(false);
-                        setIsDraftPreview(false);
-                        setGameState('game_select');
-                      }}
-                      className="w-full bg-white text-sky-500 font-bold text-xl py-3 rounded-[2rem] shadow-[0_6px_0_rgba(0,0,0,0.05)] active:translate-y-2 active:shadow-none hover:scale-[1.02] transition-all border-4 border-sky-100 flex items-center justify-center gap-2 mt-2"
-                    >
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
-                      กลับไปเลือกเกม
-                    </button>
-                  </div>
-                </>
-              ) : isSessionMode ? (
-                <div className="w-full flex flex-col gap-4 relative z-30 mt-4">
-                  <button 
-                    onClick={nextSessionMission}
-                    className="w-full bg-sky-500 text-white font-bold text-3xl py-5 rounded-[2.5rem] shadow-[0_8px_0_rgb(2,132,199),_0_15px_20px_rgba(0,0,0,0.15)] active:translate-y-2 active:shadow-[0_0_0_rgb(2,132,199)] hover:scale-[1.02] transition-all border-[6px] border-sky-300 tracking-wide animate-[pulse_2s_infinite]"
-                  >
-                    ภารกิจถัดไป
-                  </button>
                     <button 
                       onClick={() => startMission(activeMission)}
-                      className="w-full bg-white text-sky-500 font-bold text-xl py-3 rounded-[2rem] shadow-[0_6px_0_rgba(0,0,0,0.05)] active:translate-y-2 active:shadow-none hover:scale-[1.02] transition-all border-4 border-sky-100 mt-2"
+                      className="w-full bg-white text-sky-500 font-bold text-sm sm:text-base py-2 sm:py-2.5 rounded-[1.8rem] shadow-[0_3px_0_rgba(0,0,0,0.05)] active:translate-y-1 active:shadow-none hover:scale-[1.02] transition-all border-2 border-sky-100 cursor-pointer"
                     >
                       เล่นอีกครั้ง
                     </button>
                   </div>
                 ) : (
-                  <div className="w-full flex flex-col gap-4 relative z-30 mt-4">
-                      <button 
-                        onClick={() => startMission(activeMission)}
-                        className="w-full bg-green-500 text-white font-bold text-3xl py-4 rounded-[2.5rem] shadow-[0_8px_0_rgb(22,163,74),_0_15px_20px_rgba(0,0,0,0.15)] active:translate-y-2 active:shadow-[0_0_0_rgb(22,163,74)] hover:scale-[1.02] transition-all border-[6px] border-green-300 tracking-wide"
-                      >
-                        เล่นอีกครั้ง
-                      </button>
+                  <div className="w-full flex flex-col gap-2 relative z-30 mt-0.5">
+                    <button 
+                      onClick={() => startMission(activeMission)}
+                      className="w-full bg-green-500 text-white font-bold text-xl sm:text-2xl py-3 sm:py-3.5 rounded-[2rem] shadow-[0_5px_0_rgb(22,163,74),_0_10px_15px_rgba(0,0,0,0.12)] active:translate-y-1 active:shadow-[0_0_0_rgb(22,163,74)] hover:scale-[1.02] transition-all border-[4px] border-green-300 tracking-wide cursor-pointer"
+                    >
+                      เล่นอีกครั้ง
+                    </button>
                     <button 
                       onClick={() => {
                         setIsSessionMode(false);
@@ -1019,16 +1025,17 @@ useEffect(() => {
                         setBasket([]);
                         setHintMessage(null);
                       }}
-                      className="w-full bg-white text-sky-500 font-bold text-xl py-3 rounded-[2rem] shadow-[0_6px_0_rgba(0,0,0,0.05)] active:translate-y-2 active:shadow-none transition-all border-4 border-sky-100 flex items-center justify-center gap-2"
+                      className="w-full bg-white text-sky-500 font-bold text-sm sm:text-base py-2 sm:py-2.5 rounded-[1.8rem] shadow-[0_3px_0_rgba(0,0,0,0.05)] active:translate-y-1 active:shadow-none transition-all border-2 border-sky-100 flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
                       กลับหน้าเลือกด่าน
                     </button>
                   </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
     </div>
   );
